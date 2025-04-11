@@ -224,7 +224,7 @@ async function saveYarnToken(token: string, cwd: string): Promise<void> {
  */
 async function saveYarnBerryToken(token: string, cwd: string): Promise<void> {
   const yarnrcPath = path.join(cwd, ".yarnrc.yml")
-  let yamlObj: Record<string, any> = {}
+  let yamlObj: Record<string, unknown> = {}
 
   // Read existing config if it exists
   if (fs.existsSync(yarnrcPath)) {
@@ -242,7 +242,7 @@ async function saveYarnBerryToken(token: string, cwd: string): Promise<void> {
   }
 
   // Set or update the tiptap-pro scope
-  yamlObj.npmScopes["tiptap-pro"] = {
+  ;(yamlObj.npmScopes as Record<string, unknown>)["tiptap-pro"] = {
     npmRegistryServer: TIPTAP_REGISTRY,
     npmAuthToken: token,
   }

@@ -379,7 +379,7 @@ export const add = new Command()
         return
       }
 
-      let { errors, config } = await preFlightAdd(options)
+      const { errors, config } = await preFlightAdd(options)
 
       if (errors[ERRORS.MISSING_DIR_OR_EMPTY_PROJECT]) {
         logger.warn(`\n${UI.missingDirectory}`)

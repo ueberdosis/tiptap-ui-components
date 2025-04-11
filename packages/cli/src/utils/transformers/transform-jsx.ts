@@ -1,7 +1,8 @@
 import { type Transformer } from "@/src/utils/transformers"
 import { transformFromAstSync } from "@babel/core"
 import { ParserOptions, parse } from "@babel/parser"
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import transformTypescript from "@babel/plugin-transform-typescript"
 import * as recast from "recast"
 

@@ -112,7 +112,7 @@ export async function createProject(options: ProjectOptions) {
       : "next"
 
   let projectName = "my-app"
-  let nextVersion = "latest"
+  const nextVersion = "latest"
 
   // Only prompt for framework if not already specified
   if (!normalizedOptions.framework) {

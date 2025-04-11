@@ -145,8 +145,8 @@ export async function registryResolveItemsTree(
       names.unshift("index")
     }
 
-    let registryItems = await resolveRegistryItems(names, config)
-    let result = await fetchRegistry(registryItems, config)
+    const registryItems = await resolveRegistryItems(names, config)
+    const result = await fetchRegistry(registryItems, config)
     const payload = z.array(registryItemSchema).parse(result)
 
     if (!payload) {
@@ -210,7 +210,7 @@ async function resolveRegistryDependencies(
 
 // TODO: We're double-fetching here. Use a cache.
 export async function resolveRegistryItems(names: string[], config: Config) {
-  let registryDependencies: string[] = []
+  const registryDependencies: string[] = []
   for (const name of names) {
     const itemRegistryDependencies = await resolveRegistryDependencies(
       name,

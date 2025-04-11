@@ -174,7 +174,7 @@ export async function resolveConfigPaths(cwd: string, config: RawConfig) {
 // Since cwd is not necessarily the root of the project.
 // We'll instead check if ui aliases resolve to a different root.
 export async function getWorkspaceConfig(config: Config) {
-  let resolvedAliases: any = {}
+  const resolvedAliases: Record<string, Config> = {}
 
   for (const key of Object.keys(config.aliases)) {
     if (!isAliasKey(key, config)) {

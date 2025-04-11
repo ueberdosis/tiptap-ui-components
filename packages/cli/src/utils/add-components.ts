@@ -21,6 +21,7 @@ import { spinner } from "@/src/utils/spinner"
 import { updateDependencies } from "@/src/utils/updaters/update-dependencies"
 import { updateFiles } from "@/src/utils/updaters/update-files"
 import { z } from "zod"
+import { colors } from "@/src/utils/colors"
 
 export async function addComponents(
   components: string[],
@@ -94,15 +95,17 @@ async function addWorkspaceComponents(
   const registrySpinner = spinner(`Checking registry.`, {
     silent: options.silent,
   })?.start()
-  let registryItems = await resolveRegistryItems(components, config)
-  let result = await fetchRegistry(registryItems, config)
+  const registryItems = await resolveRegistryItems(components, config)
+  const result = await fetchRegistry(registryItems, config)
 
   const payload = z.array(registryItemSchema).parse(result)
   if (!payload.length) {
     registrySpinner?.fail()
     return handleError(new Error("Failed to fetch components from registry."))
   }
-  registrySpinner?.succeed()
+  registrySpinner.stopAndPersist({
+    symbol: colors.cyan("✔"),
+  })
 
   const registryParentMap = getRegistryParentMap(payload)
   const registryTypeAliasMap = getRegistryTypeAliasMap()
@@ -123,7 +126,7 @@ async function addWorkspaceComponents(
     }
 
     // A good start is ui for now.
-    let targetConfig =
+    const targetConfig =
       component.type === "registry:ui" || registryParent?.type === "registry:ui"
         ? workspaceConfig.tiptapUi || config
         : config
@@ -169,7 +172,9 @@ async function addWorkspaceComponents(
     )
   }
 
-  rootSpinner?.succeed()
+  rootSpinner.stopAndPersist({
+    symbol: colors.cyan("✔"),
+  })
 
   // Sort files.
   filesCreated.sort()
@@ -191,7 +196,9 @@ async function addWorkspaceComponents(
       {
         silent: options.silent,
       }
-    )?.succeed()
+    )?.stopAndPersist({
+      symbol: colors.cyan("✔"),
+    })
     for (const file of filesCreated) {
       logger.log(`  - ${file}`)
     }

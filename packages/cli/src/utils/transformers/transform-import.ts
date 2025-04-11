@@ -27,19 +27,19 @@ function updateImportAliases(moduleSpecifier: string, config: Config): string {
   }
 
   // Handle template imports specifically to preserve the template structure
-  if (moduleSpecifier.match(/@\/registry\/templates\/([^\/]+)\/components\//)) {
+  if (moduleSpecifier.match(/@\/registry\/templates\/([^/]+)\/components\//)) {
     return moduleSpecifier.replace(
-      /@\/registry\/templates\/([^\/]+)\/components\//,
+      /@\/registry\/templates\/([^/]+)\/components\//,
       `${config.aliases.components}/templates/$1/`
     )
   }
 
   // Handle template imports without the components part
   if (
-    moduleSpecifier.match(/@\/registry\/templates\/([^\/]+)\/(?!components\/)/)
+    moduleSpecifier.match(/@\/registry\/templates\/([^/]+)\/(?!components\/)/)
   ) {
-    return moduleSpecifier.replace(
-      /@\/registry\/templates\/([^\/]+)\//,
+    moduleSpecifier.replace(
+      /@\/registry\/templates\/([^/]+)\//,
       `${config.aliases.components}/templates/$1/`
     )
   }

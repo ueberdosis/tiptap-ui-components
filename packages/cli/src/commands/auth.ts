@@ -166,7 +166,8 @@ async function checkYarnVersion(cwd: string): Promise<boolean> {
  * Handle the login process with interactive prompts if needed
  */
 async function handleLogin(options: AuthOptions) {
-  let { email, password, writeConfig, cwd } = options
+  let { email, password, writeConfig } = options
+  const { cwd } = options
 
   // Interactive prompts if necessary values aren't provided
   if (!email) {

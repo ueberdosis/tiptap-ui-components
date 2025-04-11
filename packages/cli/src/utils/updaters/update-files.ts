@@ -372,9 +372,9 @@ export function resolveFilePath(
     file.path.includes("templates/") &&
     file.type !== "registry:page"
   ) {
-    const match = file.path.match(/templates\/([^\/]+)\/(.*)/)
+    const match = file.path.match(/templates\/([^/]+)\/(.*)/)
     if (match) {
-      const [_, templateName, relativePath] = match
+      const [, templateName, relativePath] = match
 
       // If it's a component file in the components directory, adjust the path
       if (relativePath.startsWith("components/")) {
@@ -403,7 +403,7 @@ export function resolveFilePath(
     file.path.includes("templates/") &&
     file.target.includes("/data/")
   ) {
-    const templateMatch = file.path.match(/templates\/([^\/]+)\//)
+    const templateMatch = file.path.match(/templates\/([^/]+)\//)
     if (templateMatch) {
       const templateName = templateMatch[1]
       const dataPath = file.target.split("/data/")[1]

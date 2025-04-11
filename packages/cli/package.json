@@ -47,7 +47,6 @@
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
     "cosmiconfig": "^9.0.0",
-    "cross-env": "^7.0.3",
     "deepmerge": "^4.3.1",
     "execa": "^9.5.2",
     "fast-glob": "^3.3.3",
