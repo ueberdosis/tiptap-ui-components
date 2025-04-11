@@ -58,7 +58,3 @@ The components and templates available in this public repository are MIT license
 
 ## Customization
 All UI components and primitives have minimal, neutral styling, designed to blend into your application's theme without complicated overrides. Customize directly by editing the source code.
-
-## Licensing
-- Open source components and templates in this repository: MIT License.
-- Paid components, which are not part of this public repository, require a valid Tiptap subscription.
