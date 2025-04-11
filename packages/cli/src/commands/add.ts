@@ -12,6 +12,7 @@ import { logger } from "@/src/utils/logger"
 import { fetchFreeRegistry, getRegistryIndex } from "@/src/utils/registry"
 import { colors } from "@/src/utils/colors"
 import type { RegistryItemIndexSchema } from "@/src/utils/registry/schema"
+import { toReadableName } from "@/src/utils/common"
 
 export const addOptionsSchema = z.object({
   components: z.array(z.string()).optional(),
@@ -97,16 +98,6 @@ function filterFreeTemplates(
  */
 const createInstruction = (text: string): string => {
   return `\n${colors.gray(text)}\n`
-}
-
-/**
- * Converts kebab-case or snake_case to Title Case
- */
-function toReadableName(input: string): string {
-  return input
-    .split(/[-_]/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ")
 }
 
 /**
@@ -280,7 +271,7 @@ async function templateMenu(
         : ""
 
       return {
-        name: `${template.name}${description} (${planLabel})`,
+        name: `${toReadableName(template.name)}${description} (${planLabel})`,
         value: template.name,
       }
     })
