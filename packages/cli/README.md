@@ -29,7 +29,7 @@ Arguments
 
 Options
 
-    -t, --framework <framework>     the framework to use (next, vite)
+    -f, --framework <framework>     the framework to use (next, vite)
     -c, --cwd <cwd>                 the working directory (defaults to current directory)
     -s, --silent                    mute output
     --src-dir                       use the src directory when creating a new project (specific to next).
