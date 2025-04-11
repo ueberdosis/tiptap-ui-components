@@ -153,7 +153,7 @@ export const getAvatar = (name: string) => {
  * Handles image upload with progress tracking and abort capability
  */
 export const handleImageUpload = async (
-  file: File,
+  _file: File,
   onProgress?: (event: { progress: number }) => void,
   abortSignal?: AbortSignal
 ): Promise<string> => {

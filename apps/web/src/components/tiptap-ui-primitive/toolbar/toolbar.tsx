@@ -9,21 +9,21 @@ interface ToolbarProps extends BaseProps {
 }
 
 const mergeRefs = <T,>(
-  refs: Array<React.MutableRefObject<T> | React.LegacyRef<T> | null | undefined>
+  refs: Array<React.RefObject<T> | React.Ref<T> | null | undefined>
 ): React.RefCallback<T> => {
   return (value) => {
     refs.forEach((ref) => {
       if (typeof ref === "function") {
         ref(value)
       } else if (ref != null) {
-        ;(ref as React.MutableRefObject<T | null>).current = value
+        ;(ref as React.RefObject<T | null>).current = value
       }
     })
   }
 }
 
 const useObserveVisibility = (
-  ref: React.RefObject<HTMLElement>,
+  ref: React.RefObject<HTMLElement | null>,
   callback: () => void
 ): void => {
   React.useEffect(() => {
@@ -56,7 +56,7 @@ const useObserveVisibility = (
 }
 
 const useToolbarKeyboardNav = (
-  toolbarRef: React.RefObject<HTMLDivElement>
+  toolbarRef: React.RefObject<HTMLDivElement | null>
 ): void => {
   React.useEffect(() => {
     const toolbar = toolbarRef.current
@@ -120,7 +120,7 @@ const useToolbarKeyboardNav = (
 }
 
 const useToolbarVisibility = (
-  ref: React.RefObject<HTMLDivElement>
+  ref: React.RefObject<HTMLDivElement | null>
 ): boolean => {
   const [isVisible, setIsVisible] = React.useState(true)
   const isMountedRef = React.useRef(false)
@@ -154,7 +154,9 @@ const useToolbarVisibility = (
   return isVisible
 }
 
-const useGroupVisibility = (ref: React.RefObject<HTMLDivElement>): boolean => {
+const useGroupVisibility = (
+  ref: React.RefObject<HTMLDivElement | null>
+): boolean => {
   const [isVisible, setIsVisible] = React.useState(true)
   const isMountedRef = React.useRef(false)
 
@@ -184,7 +186,7 @@ const useGroupVisibility = (ref: React.RefObject<HTMLDivElement>): boolean => {
 }
 
 const useSeparatorVisibility = (
-  ref: React.RefObject<HTMLDivElement>
+  ref: React.RefObject<HTMLDivElement | null>
 ): boolean => {
   const [isVisible, setIsVisible] = React.useState(true)
   const isMountedRef = React.useRef(false)

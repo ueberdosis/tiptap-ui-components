@@ -157,22 +157,27 @@ export const DropdownMenuTrigger = React.forwardRef<
   const context = useDropdownMenuContext()
   const childrenRef = React.isValidElement(children)
     ? parseInt(React.version, 10) >= 19
-      ? children.props.ref
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (children as { props: { ref?: React.Ref<any> } }).props.ref
       : // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (children as any).ref
     : undefined
   const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef])
 
   if (asChild && React.isValidElement(children)) {
+    const dataAttributes = {
+      "data-state": context.open ? "open" : "closed",
+    }
+
     return React.cloneElement(
       children,
       context.getReferenceProps({
         ref,
         ...props,
-        ...children.props,
+        ...(typeof children.props === "object" ? children.props : {}),
         "aria-expanded": context.open,
         "aria-haspopup": "menu" as const,
-        "data-state": context.open ? "open" : "closed",
+        ...dataAttributes,
       })
     )
   }
@@ -315,16 +320,27 @@ export const DropdownMenuItem = React.forwardRef<
 
     if (asChild && React.isValidElement(children)) {
       const childProps = children.props as {
-        onClick?: (event: React.MouseEvent<HTMLDivElement>) => void
+        onClick?: (event: React.MouseEvent<HTMLElement>) => void
+      }
+
+      // Create merged props without adding onClick directly to the props object
+      const mergedProps = {
+        ...itemProps,
+        ...(typeof children.props === "object" ? children.props : {}),
+      }
+
+      // Handle onClick separately based on the element type
+      const eventHandlers = {
+        onClick: (event: React.MouseEvent<HTMLElement>) => {
+          // Cast the event to make it compatible with handleSelect
+          handleSelect(event as unknown as React.MouseEvent<HTMLDivElement>)
+          childProps.onClick?.(event)
+        },
       }
 
       return React.cloneElement(children, {
-        ...itemProps,
-        ...children.props,
-        onClick: (event: React.MouseEvent<HTMLDivElement>) => {
-          handleSelect(event)
-          childProps.onClick?.(event)
-        },
+        ...mergedProps,
+        ...eventHandlers,
       })
     }
 

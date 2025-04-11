@@ -41,6 +41,8 @@ export function useWindowSize() {
         window.visualViewport?.removeEventListener("scroll", handleResize)
       }
     }
+
+    return () => {}
   }, [handleResize])
 
   return windowSize

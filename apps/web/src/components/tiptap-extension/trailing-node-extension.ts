@@ -49,12 +49,14 @@ export const TrailingNode = Extension.create<TrailingNodeOptions>({
           const type = schema.nodes[this.options.node]
 
           if (!shouldInsertNodeAtEnd) {
-            return
+            return null
           }
 
           if (type) {
             return tr.insert(endPosition, type.create())
           }
+
+          return null
         },
         state: {
           init: (_, state) => {

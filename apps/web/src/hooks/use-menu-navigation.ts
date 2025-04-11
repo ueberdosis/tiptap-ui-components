@@ -136,6 +136,8 @@ export function useMenuNavigation<T>({
         )
       }
     }
+
+    return undefined
   }, [
     editor,
     containerRef,
