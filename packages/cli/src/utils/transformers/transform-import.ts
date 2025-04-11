@@ -38,7 +38,7 @@ function updateImportAliases(moduleSpecifier: string, config: Config): string {
   if (
     moduleSpecifier.match(/@\/registry\/templates\/([^/]+)\/(?!components\/)/)
   ) {
-    moduleSpecifier.replace(
+    return moduleSpecifier.replace(
       /@\/registry\/templates\/([^/]+)\//,
       `${config.aliases.components}/templates/$1/`
     )
