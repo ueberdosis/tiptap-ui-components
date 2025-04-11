@@ -1,0 +1,75 @@
+{
+  "name": "tiptap-cli",
+  "version": "1.0.0",
+  "description": "Tiptap CLI",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "tiptap",
+    "url": "https://github.com/ueberdosis/tiptap"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "tiptap"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "bin": "./dist/index.js",
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "start:dev": "cross-env REGISTRY_URL=http://localhost:3000 node dist/index.js",
+    "start:prod": "cross-env REGISTRY_URL=https://template.tiptap.dev node dist/index.js",
+    "start": "node dist/index.js",
+    "pub:beta": "pnpm build && pnpm publish --no-git-checks --access public --tag beta",
+    "pub:release": "pnpm build && pnpm publish --access public"
+  },
+  "dependencies": {
+    "@antfu/ni": "^23.3.1",
+    "@babel/core": "^7.26.10",
+    "@babel/parser": "^7.27.0",
+    "@babel/plugin-transform-typescript": "^7.27.0",
+    "@inquirer/core": "^10.1.10",
+    "@inquirer/figures": "^1.0.11",
+    "@inquirer/prompts": "^7.4.1",
+    "@inquirer/type": "^3.0.6",
+    "ansi-escapes": "^7.0.0",
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "cosmiconfig": "^9.0.0",
+    "cross-env": "^7.0.3",
+    "deepmerge": "^4.3.1",
+    "execa": "^9.5.2",
+    "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.0",
+    "https-proxy-agent": "^7.0.6",
+    "jsonc-parser": "^3.3.1",
+    "kleur": "^4.1.5",
+    "node-fetch": "^3.3.2",
+    "ora": "^8.2.0",
+    "recast": "^0.23.11",
+    "ts-morph": "^25.0.1",
+    "tsconfig-paths": "^4.2.0",
+    "yaml": "^2.7.1",
+    "yoctocolors-cjs": "^2.1.2",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-typescript": "^7.26.5",
+    "@types/babel__core": "^7.20.5",
+    "@types/fs-extra": "^11.0.4",
+    "@types/prompts": "^2.4.9",
+    "tsup": "^8.4.0",
+    "type-fest": "^4.39.1"
+  }
+}

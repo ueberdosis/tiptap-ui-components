@@ -1,0 +1,19 @@
+{
+  "name": "tiptap-ui-components",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md,js}\"",
+    "web:dev": "pnpm --filter=web dev",
+    "tiptap-cli": "pnpm --filter=tiptap-cli start:dev",
+    "pub:release": "cd packages/cli && pnpm pub:release"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}
