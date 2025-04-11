@@ -237,6 +237,8 @@ async function createNextProject(
       { cwd: options.cwd }
     )
 
+    await updateReadmeFile(projectPath)
+
     createSpinner.stopAndPersist({
       symbol: colors.cyan("✔"),
       text: colors.white(`Creating a new Next.js project.`),
@@ -282,6 +284,8 @@ async function createViteProject(
     })
 
     await setupViteTsConfig(projectPath)
+
+    await updateReadmeFile(projectPath)
 
     createSpinner.stopAndPersist({
       symbol: colors.cyan("✔"),
@@ -441,5 +445,54 @@ async function initializeGitRepository(projectPath: string) {
     logger.warn(
       "Failed to initialize git repository, but project creation succeeded"
     )
+  }
+}
+
+async function updateReadmeFile(projectPath: string) {
+  const readmePath = path.join(projectPath, "README.md")
+
+  const readmeContent = `# Tiptap Editor Project
+
+This project was created using Tiptap CLI.
+
+## Getting Started
+
+1. Install dependencies:
+   \`\`\`
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   \`\`\`
+
+2. Start the development server:
+   \`\`\`
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   \`\`\`
+
+3. Open your browser and navigate to http://localhost:3000
+
+## Features
+
+- Rich text editing with Tiptap
+- Customizable toolbar
+- Support for images, code blocks, and more
+- Dark/light mode support
+
+## Documentation
+
+For more information, visit the [Tiptap documentation](https://tiptap.dev/docs).
+`
+
+  try {
+    await fs.writeFile(readmePath, readmeContent, "utf-8")
+    console.log(`Updated README.md in ${projectPath}`)
+  } catch (error) {
+    console.error(`Error updating README.md: ${error}`)
   }
 }
