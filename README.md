@@ -1,6 +1,6 @@
 # Tiptap UI Components
 
-This repository contains a collection of UI Components, templates, and primitives designed specifically for integration with Tiptap, a headless and modular rich text editor.
+This repository contains a collection of [UI Components](https://tiptap.dev/ui-components/components/overview), [templates](https://tiptap.dev/docs/ui-components/templates/simple-editor), and [primitives](https://tiptap.dev/docs/ui-components/primitives) designed specifically for integration with Tiptap, a headless and modular rich text editor.
 
 It also includes a CLI tool to quickly install any component from the UI Components library.
 
@@ -8,6 +8,8 @@ UI Components and Templates help you create a rich text editor from scratch by p
 
 
 ## Getting Started
+
+Head over to the [UI Components](https://tiptap.dev/docs/ui-components/getting-started/overview) documentation to see demos and instructions.
 
 ### Installation
 
@@ -29,7 +31,7 @@ npx tiptap-cli add [component-name]
 
 Templates provide fully working editor setups, including all essential components and features:
 
-Simple Editor (Open Source):
+[Simple Editor](https://tiptap.dev/docs/ui-components/templates/simple-editor) (Open Source):
 - Responsive, supports dark/light modes
 - Rich text formatting, image upload, link editing
 - MIT licensed, fully customizable
@@ -37,7 +39,7 @@ Simple Editor (Open Source):
 
 ### Open Source Components
 
-The components and templates available in this public repository are MIT licensed and freely available:
+The [components](https://tiptap.dev/ui-components/components/overview) available in this public repository are MIT licensed and freely available:
 
 #### UI Components:
 - Heading button/dropdown
