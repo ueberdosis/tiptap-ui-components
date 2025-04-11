@@ -12,6 +12,8 @@ export const registryItemTypeSchema = z.enum([
   "registry:ui",
   "registry:page",
   "registry:component",
+  "registry:style",
+  "registry:asset",
 ])
 
 // TODO: next release

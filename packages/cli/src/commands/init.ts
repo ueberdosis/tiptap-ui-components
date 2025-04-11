@@ -19,6 +19,7 @@ import {
   DEFAULT_HOOKS,
   DEFAULT_ICONS,
   DEFAULT_LIB,
+  DEFAULT_STYLES,
   DEFAULT_TIPTAP_EXTENSIONS,
   DEFAULT_TIPTAP_NODES,
   DEFAULT_TIPTAP_UI,
@@ -213,6 +214,7 @@ async function promptForConfig(defaultConfig: Config | null = null) {
       tiptapNodes: DEFAULT_TIPTAP_NODES,
       tiptapUi: DEFAULT_TIPTAP_UI,
       tiptapUiPrimitives: DEFAULT_TIPTAP_UI_PRIMITIVES,
+      styles: DEFAULT_STYLES,
     },
   })
 }

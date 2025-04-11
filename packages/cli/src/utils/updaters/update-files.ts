@@ -12,6 +12,7 @@ import { spinner } from "@/src/utils/spinner"
 import { transform } from "@/src/utils/transformers"
 import { transformImport } from "@/src/utils/transformers/transform-import"
 import { transformRsc } from "@/src/utils/transformers/transform-rsc"
+import { transformEnvVars } from "@/src/utils/transformers/transform-env-vars"
 import { z } from "zod"
 import { confirm } from "@inquirer/prompts"
 import chalk from "chalk"
@@ -88,7 +89,7 @@ export async function updateFiles(
         config,
         transformJsx: !config.tsx,
       },
-      [transformImport, transformRsc]
+      [transformImport, transformRsc, transformEnvVars]
     )
 
     if (existingFile) {
@@ -255,6 +256,10 @@ export function resolveFileTargetDirectory(
     return config.resolvedPaths.components
   }
 
+  if (file.type === "registry:style") {
+    return config.resolvedPaths.styles
+  }
+
   return config.resolvedPaths.components
 }
 
@@ -366,6 +371,21 @@ export function resolveFilePath(
     framework?: ProjectInfo["framework"]["name"]
   }
 ) {
+  // if (file.type === "registry:asset") {
+  //   if (file.target) {
+  //     // replace assets/ and public/ with the public directory
+  //     const targetDir = file.target.replace(/^assets\//, "")
+  //     const targetDirPublic = targetDir.replace(/^public\//, "")
+  //     const targetDirPublicPath = path.join(
+  //       config.resolvedPaths.cwd,
+  //       "public",
+  //       targetDirPublic
+  //     )
+
+  //     return targetDirPublicPath
+  //   }
+  // }
+
   // Special handling for template files without targets
   if (
     !file.target &&

@@ -116,6 +116,10 @@ function updateImportAliases(moduleSpecifier: string, config: Config): string {
     )
   }
 
+  if (config.aliases.styles && moduleSpecifier.match(/@\/registry\/styles/)) {
+    return moduleSpecifier.replace(/@\/registry\/styles/, config.aliases.styles)
+  }
+
   // Default case - preserve all other imports
   return moduleSpecifier.replace(
     /^@\/registry\/[^/]+(?:\/.*\/)?/,

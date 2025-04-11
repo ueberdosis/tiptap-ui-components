@@ -15,6 +15,7 @@ export const DEFAULT_TIPTAP_EXTENSIONS = "@/components/tiptap-extension"
 export const DEFAULT_TIPTAP_NODES = "@/components/tiptap-node"
 export const DEFAULT_TIPTAP_UI = "@/components/tiptap-ui"
 export const DEFAULT_TIPTAP_UI_PRIMITIVES = "@/components/tiptap-ui-primitive"
+export const DEFAULT_STYLES = "@/styles"
 
 const explorer = cosmiconfig("components", {
   searchPlaces: ["components.json"],
@@ -33,6 +34,7 @@ export const rawConfigSchema = z.object({
     tiptapNodes: z.string().optional(),
     tiptapUi: z.string().optional(),
     tiptapUiPrimitives: z.string().optional(),
+    styles: z.string().optional(),
   }),
 })
 
@@ -48,6 +50,7 @@ export const configSchema = rawConfigSchema.extend({
     tiptapNodes: z.string(),
     tiptapUi: z.string(),
     tiptapUiPrimitives: z.string(),
+    styles: z.string(),
   }),
 })
 
@@ -76,6 +79,7 @@ export async function getConfig(cwd: string) {
         tiptapNodes: DEFAULT_TIPTAP_NODES,
         tiptapUi: DEFAULT_TIPTAP_UI,
         tiptapUiPrimitives: DEFAULT_TIPTAP_UI_PRIMITIVES,
+        styles: DEFAULT_STYLES,
       },
     })
   } else {
@@ -93,6 +97,7 @@ export async function getConfig(cwd: string) {
       tiptapUi: config.aliases.tiptapUi ?? DEFAULT_TIPTAP_UI,
       tiptapUiPrimitives:
         config.aliases.tiptapUiPrimitives ?? DEFAULT_TIPTAP_UI_PRIMITIVES,
+      styles: config.aliases.styles ?? DEFAULT_STYLES,
     }
   }
 
@@ -166,6 +171,9 @@ export async function resolveConfigPaths(cwd: string, config: RawConfig) {
             (await resolveImport(config.aliases.components, tsConfig)) ?? cwd,
             "tiptap-ui-primitive"
           ),
+      styles: config.aliases.styles
+        ? await resolveImport(config.aliases.styles, tsConfig)
+        : path.resolve(cwd, "styles"),
     },
   })
 }

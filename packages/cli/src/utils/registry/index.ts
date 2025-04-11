@@ -268,6 +268,7 @@ export function getRegistryTypeAliasMap() {
     ["registry:template", "templates"],
     ["registry:component", "components"],
     ["registry:icon", "icons"],
+    ["registry:style", "styles"],
   ])
 }
 

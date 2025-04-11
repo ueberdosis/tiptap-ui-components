@@ -192,6 +192,7 @@ export async function getProjectConfig(
       tiptapNodes: `${projectInfo.aliasPrefix}/components/tiptap-nodes`,
       tiptapUi: `${projectInfo.aliasPrefix}/components/tiptap-ui`,
       tiptapUiPrimitives: `${projectInfo.aliasPrefix}/components/tiptap-ui-primitives`,
+      styles: `${projectInfo.aliasPrefix}/styles`,
     },
   }
 
