@@ -1,32 +1,64 @@
-# `Turborepo` Vite starter
+# Tiptap UI Components
 
-This is a community-maintained example. If you experience a problem, please submit a pull request with a fix. GitHub Issues will be closed.
+This repository contains a collection of UI Components, templates, and primitives designed specifically for integration with Tiptap, a headless and modular rich text editor. Components simplify the creation of rich editing experiences, providing prebuilt, customizable UI elements.
 
-## Using this example
+## Getting Started
 
-Run the following command:
+### Installation
 
-```sh
-npx create-turbo@latest -e with-vite-react
+Use the Tiptap CLI to quickly scaffold your editor setup:
+
+```bash
+npx tiptap-cli init
 ```
 
-## What's inside?
+Or add individual components directly:
 
-This Turborepo includes the following packages and apps:
+```bash
+npx tiptap-cli add [component-name]
+```
 
-### Apps and Packages
+## Available Components
 
-- `web`: react [vite](https://vitejs.dev) ts app
-- `@repo/ui`: a stub component library shared by `web` application
-- `@repo/eslint-config`: shared `eslint` configurations
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Templates
 
-Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
+Templates provide fully working editor setups, including all essential components and features:
 
-### Utilities
+Simple Editor (Open Source):
+- Responsive, supports dark/light modes
+- Rich text formatting, image upload, link editing
+- MIT licensed, fully customizable
 
-This Turborepo has some additional tools already setup for you:
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### Open Source Components
+
+The components and templates available in this public repository are MIT licensed and freely available:
+
+#### UI Components:
+- Heading button/dropdown
+- Highlight popover
+- Image upload button
+- Link popover
+- List button/dropdown
+- Mark button
+- Node button
+- Text align button
+- Undo redo button
+
+#### Node Components:
+- Code block node
+- Image node/upload node
+- List node
+- Paragraph node
+
+#### Primitives:
+- Avatar, Badge, Button
+- Dropdown menu, Popover, Separator
+- Spacer, Toolbar, Tooltip
+
+## Customization
+All UI components and primitives have minimal, neutral styling, designed to blend into your application's theme without complicated overrides. Customize directly by editing the source code.
+
+## Licensing
+- Open source components and templates in this repository: MIT License.
+- Paid components, which are not part of this public repository, require a valid Tiptap subscription.
