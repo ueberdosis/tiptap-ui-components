@@ -154,7 +154,7 @@ export async function runInit(options: InitOptions) {
   let selectedComponents = components || []
   if (!selectedComponents.length) {
     const shouldAddComponents = await createThemedConfirm(
-      "Would you like to add components to your project?"
+      "Would you like to add a template or UI components to your project?"
     )
 
     if (!shouldAddComponents) {

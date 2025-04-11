@@ -143,7 +143,7 @@ const categorizeRegistryItems = (
 async function promptForInitialSelection(
   categories: CategoryMap
 ): Promise<"components" | "templates" | null> {
-  const message = colors.white("What would you like to use:")
+  const message = colors.white("What would you like to integrate:")
   const instructions = createInstruction(
     "  Use arrow-keys ▲▼ / [Return] to submit"
   )
@@ -153,12 +153,12 @@ async function promptForInitialSelection(
     categories.ui.length === 0 && categories.nodes.length === 0
   const isTemplateEmpty = categories.templates.length === 0
 
-  if (!isComponentEmpty) {
-    choices.push({ name: "Components", value: "components" })
-  }
-
   if (!isTemplateEmpty) {
     choices.push({ name: "Templates", value: "templates" })
+  }
+
+  if (!isComponentEmpty) {
+    choices.push({ name: "Components", value: "components" })
   }
 
   if (choices.length === 0) {
@@ -177,7 +177,7 @@ async function promptForInitialSelection(
       choices,
     })
     console.log(UI.divider)
-    return selection as "components" | "templates"
+    return selection as "templates" | "components"
   } catch (error) {
     clearPromptLines(4)
     console.log(UI.operationCancelled)
@@ -245,7 +245,7 @@ async function componentMenu(
 
   try {
     const selectedComponents = await checkbox({
-      message: colors.white("Select components to add:"),
+      message: colors.white("Select the components you want to add:"),
       instructions,
       required: true,
       pageSize: 20,
@@ -286,7 +286,7 @@ async function templateMenu(
     })
 
     return await select({
-      message: colors.white("Select a template to add:"),
+      message: colors.white("Select the template you want to add:"),
       instructions,
       pageSize: PROMPT_PAGE_SIZE,
       choices,
