@@ -22,6 +22,7 @@ import { updateDependencies } from "@/src/utils/updaters/update-dependencies"
 import { updateFiles } from "@/src/utils/updaters/update-files"
 import { z } from "zod"
 import { colors } from "@/src/utils/colors"
+import { updateDevDependencies } from "@/src/utils/updaters/update-dev-dependencies"
 
 export async function addComponents(
   components: string[],
@@ -76,6 +77,11 @@ async function addProjectComponents(
   await updateDependencies(tree.dependencies, config, {
     silent: options.silent,
   })
+
+  await updateDevDependencies(tree.devDependencies, config, {
+    silent: options.silent,
+  })
+
   return await updateFiles(tree.files, config, {
     overwrite: options.overwrite,
     silent: options.silent,
