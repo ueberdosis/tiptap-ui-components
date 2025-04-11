@@ -1,6 +1,11 @@
 # Tiptap UI Components
 
-This repository contains a collection of UI Components, templates, and primitives designed specifically for integration with Tiptap, a headless and modular rich text editor. Components simplify the creation of rich editing experiences, providing prebuilt, customizable UI elements.
+This repository contains a collection of UI Components, templates, and primitives designed specifically for integration with Tiptap, a headless and modular rich text editor.
+
+It also includes a CLI tool to quickly install any component from the UI Components library.
+
+UI Components and Templates help you create a rich text editor from scratch by providing prebuilt and customizable UI elements.
+
 
 ## Getting Started
 
