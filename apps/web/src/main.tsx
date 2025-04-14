@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client"
-import { SimpleEditor } from "@/components/templates/simple/simple-editor"
+import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor"
 
 const App = () => <SimpleEditor />
 

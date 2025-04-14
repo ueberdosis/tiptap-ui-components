@@ -63,15 +63,15 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useWindowSize } from "@/hooks/use-window-size"
 
 // --- Components ---
-import { ThemeToggle } from "@/components/templates/simple/theme-toggle"
+import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle"
 
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils"
 
 // --- Styles ---
-import "@/components/templates/simple/simple-editor.scss"
+import "@/components/tiptap-templates/simple/simple-editor.scss"
 
-import content from "@/components/templates/simple/data/content.json"
+import content from "@/components/tiptap-templates/simple/data/content.json"
 
 const MainToolbarContent = ({
   onHighlighterClick,
