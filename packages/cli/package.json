@@ -13,7 +13,14 @@
     "dist"
   ],
   "keywords": [
-    "tiptap"
+    "cli",
+    "components",
+    "nextjs",
+    "react",
+    "templates",
+    "tiptap",
+    "tiptap-cli",
+    "ui"
   ],
   "type": "module",
   "exports": {
