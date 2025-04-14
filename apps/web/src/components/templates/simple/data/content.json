@@ -4,38 +4,25 @@
     {
       "type": "heading",
       "attrs": {
-        "textAlign": "left",
+        "textAlign": null,
         "level": 1
       },
       "content": [
         {
           "type": "text",
-          "text": "Welcome to Simple Editor template"
+          "text": "Getting started"
         }
       ]
     },
     {
       "type": "paragraph",
       "attrs": {
-        "textAlign": "left"
+        "textAlign": null
       },
       "content": [
         {
           "type": "text",
-          "text": "Streamline your content creation with the "
-        },
-        {
-          "type": "text",
-          "marks": [
-            {
-              "type": "bold"
-            }
-          ],
-          "text": "Tiptap Simple Editor template"
-        },
-        {
-          "type": "text",
-          "text": ", offering a "
+          "text": "Welcome to the "
         },
         {
           "type": "text",
@@ -50,330 +37,11 @@
               }
             }
           ],
-          "text": "writing experience"
+          "text": "Simple Editor"
         },
         {
           "type": "text",
-          "text": " similar to Slack and LinkedIn. Whether drafting a quick message or a detailed post, our editor provides a seamless and intuitive experience."
-        }
-      ]
-    },
-    {
-      "type": "heading",
-      "attrs": {
-        "textAlign": "left",
-        "level": 2
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "Rich style and structure"
-        }
-      ]
-    },
-    {
-      "type": "paragraph",
-      "attrs": {
-        "textAlign": "left"
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "Organize your thoughts with headings, or format your text efficiently using keyboard shortcuts, menu options, or by typing Markdown 🪄."
-        }
-      ]
-    },
-    {
-      "type": "bulletList",
-      "content": [
-        {
-          "type": "listItem",
-          "content": [
-            {
-              "type": "paragraph",
-              "attrs": {
-                "textAlign": "left"
-              },
-              "content": [
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "bold"
-                    }
-                  ],
-                  "text": "Bold"
-                },
-                {
-                  "type": "text",
-                  "text": " for emphasis with "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "code"
-                    }
-                  ],
-                  "text": "**"
-                },
-                {
-                  "type": "text",
-                  "text": " or "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "code"
-                    }
-                  ],
-                  "text": "⌘+B"
-                },
-                {
-                  "type": "text",
-                  "text": " or the "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "code"
-                    }
-                  ],
-                  "text": "B"
-                },
-                {
-                  "type": "text",
-                  "text": " button."
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "listItem",
-          "content": [
-            {
-              "type": "paragraph",
-              "attrs": {
-                "textAlign": "left"
-              },
-              "content": [
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "italic"
-                    }
-                  ],
-                  "text": "Italic"
-                },
-                {
-                  "type": "text",
-                  "text": " for subtle nuances with "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "code"
-                    }
-                  ],
-                  "text": "*"
-                },
-                {
-                  "type": "text",
-                  "text": " or "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "code"
-                    }
-                  ],
-                  "text": "⌘+I"
-                },
-                {
-                  "type": "text",
-                  "text": " or the "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "code"
-                    }
-                  ],
-                  "text": "I"
-                },
-                {
-                  "type": "text",
-                  "text": " button."
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "listItem",
-          "content": [
-            {
-              "type": "paragraph",
-              "attrs": {
-                "textAlign": "left"
-              },
-              "content": [
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "strike"
-                    }
-                  ],
-                  "text": "Strikethrough"
-                },
-                {
-                  "type": "text",
-                  "text": " to show revisions with "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "code"
-                    }
-                  ],
-                  "text": "~~"
-                },
-                {
-                  "type": "text",
-                  "text": " or the "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "code"
-                    }
-                  ],
-                  "text": "~~S~~"
-                },
-                {
-                  "type": "text",
-                  "text": " button."
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "listItem",
-          "content": [
-            {
-              "type": "paragraph",
-              "attrs": {
-                "textAlign": "left"
-              },
-              "content": [
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "highlight",
-                      "attrs": {
-                        "color": "var(--tt-highlight-purple)"
-                      }
-                    }
-                  ],
-                  "text": "Highlight text"
-                },
-                {
-                  "type": "text",
-                  "text": " "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "highlight",
-                      "attrs": {
-                        "color": "var(--tt-highlight-red)"
-                      }
-                    }
-                  ],
-                  "text": "in"
-                },
-                {
-                  "type": "text",
-                  "text": " "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "highlight",
-                      "attrs": {
-                        "color": "var(--tt-highlight-green)"
-                      }
-                    }
-                  ],
-                  "text": "different"
-                },
-                {
-                  "type": "text",
-                  "text": " "
-                },
-                {
-                  "type": "text",
-                  "marks": [
-                    {
-                      "type": "highlight",
-                      "attrs": {
-                        "color": "var(--tt-highlight-blue)"
-                      }
-                    }
-                  ],
-                  "text": "colors"
-                },
-                {
-                  "type": "text",
-                  "text": " to draw attention to key points."
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "heading",
-      "attrs": {
-        "textAlign": "left",
-        "level": 2
-      },
-      "content": [
-        {
-          "type": "text",
-          "marks": [
-            {
-              "type": "bold"
-            }
-          ],
-          "text": "Code and Quotes"
-        }
-      ]
-    },
-    {
-      "type": "paragraph",
-      "attrs": {
-        "textAlign": "left"
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "Use "
+          "text": " template! This template integrates "
         },
         {
           "type": "text",
@@ -382,11 +50,55 @@
               "type": "bold"
             }
           ],
-          "text": "code blocks"
+          "text": "open source"
         },
         {
           "type": "text",
-          "text": " to share code snippets that are easily readable and distinguishable from regular text. For example:"
+          "text": " UI components and Tiptap extensions licensed under "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            }
+          ],
+          "text": "MIT"
+        },
+        {
+          "type": "text",
+          "text": "."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Integrate it by following the "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "https://tiptap.dev/docs/ui-components/templates/simple-editor",
+                "target": "_blank",
+                "rel": "noopener noreferrer nofollow",
+                "class": null
+              }
+            }
+          ],
+          "text": "Tiptap UI Components docs"
+        },
+        {
+          "type": "text",
+          "text": " or using our CLI tool."
         }
       ]
     },
@@ -398,32 +110,20 @@
       "content": [
         {
           "type": "text",
-          "text": "console.log('Hello, World!');"
+          "text": "npx tiptap-cli init"
         }
       ]
     },
     {
-      "type": "paragraph",
+      "type": "heading",
       "attrs": {
-        "textAlign": "left"
+        "textAlign": null,
+        "level": 2
       },
       "content": [
         {
           "type": "text",
-          "text": "Incorporate "
-        },
-        {
-          "type": "text",
-          "marks": [
-            {
-              "type": "bold"
-            }
-          ],
-          "text": "block quotes"
-        },
-        {
-          "type": "text",
-          "text": " to add depth to your writing:"
+          "text": "Features"
         }
       ]
     },
@@ -433,39 +133,63 @@
         {
           "type": "paragraph",
           "attrs": {
-            "textAlign": "left"
+            "textAlign": null
           },
           "content": [
             {
               "type": "text",
-              "text": "\"The best way to predict the future is to invent it.\""
-            }
-          ]
-        },
-        {
-          "type": "paragraph",
-          "attrs": {
-            "textAlign": "left"
-          },
-          "content": [
+              "marks": [
+                {
+                  "type": "italic"
+                }
+              ],
+              "text": "A fully responsive rich text editor with built-in support for common formatting and layout tools. Type markdown "
+            },
             {
               "type": "text",
-              "text": "— Alan Kay"
+              "marks": [
+                {
+                  "type": "code"
+                }
+              ],
+              "text": "**"
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "italic"
+                }
+              ],
+              "text": " or use keyboard shortcuts "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "code"
+                }
+              ],
+              "text": "⌘+B"
+            },
+            {
+              "type": "text",
+              "text": " for "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "strike"
+                }
+              ],
+              "text": "most"
+            },
+            {
+              "type": "text",
+              "text": " all common markdown marks. 🪄"
             }
           ]
-        }
-      ]
-    },
-    {
-      "type": "heading",
-      "attrs": {
-        "textAlign": "left",
-        "level": 2
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "Visual enhancements"
         }
       ]
     },
@@ -477,7 +201,23 @@
       "content": [
         {
           "type": "text",
-          "text": "Add images, customize alignment, and apply advanced formatting to make your writing more engaging and professional."
+          "text": "Add images, customize alignment, and apply "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "highlight",
+              "attrs": {
+                "color": "var(--tt-highlight-blue)"
+              }
+            }
+          ],
+          "text": "advanced formatting"
+        },
+        {
+          "type": "text",
+          "text": " to make your writing more engaging and professional."
         }
       ]
     },
@@ -612,6 +352,38 @@
       ]
     },
     {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "→ "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "https://tiptap.dev/docs/ui-components/templates/simple-editor#features",
+                "target": "_blank",
+                "rel": "noopener noreferrer nofollow",
+                "class": null
+              }
+            }
+          ],
+          "text": "Learn more"
+        }
+      ]
+    },
+    {
       "type": "horizontalRule"
     },
     {
@@ -623,7 +395,7 @@
       "content": [
         {
           "type": "text",
-          "text": "Customizable and adaptive"
+          "text": "Make it your own"
         }
       ]
     },
@@ -636,18 +408,6 @@
         {
           "type": "text",
           "text": "Switch between light and dark modes, and tailor the editor's appearance with customizable CSS to match your style."
-        }
-      ]
-    },
-    {
-      "type": "paragraph",
-      "attrs": {
-        "textAlign": "left"
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "Explore the Tiptap Simple Editor template and make your content creation process enjoyable in any mode!"
         }
       ]
     },
@@ -692,34 +452,14 @@
                     {
                       "type": "link",
                       "attrs": {
-                        "href": "https://www.notion.so/tiptap-suite/google.com",
+                        "href": "https://tiptap.dev/docs/ui-components/templates/simple-editor",
                         "target": "_blank",
                         "rel": "noopener noreferrer nofollow",
                         "class": null
                       }
                     }
                   ],
-                  "text": "Create account"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "taskItem",
-          "attrs": {
-            "checked": false
-          },
-          "content": [
-            {
-              "type": "paragraph",
-              "attrs": {
-                "textAlign": "left"
-              },
-              "content": [
-                {
-                  "type": "text",
-                  "text": "Download free template"
+                  "text": "Integrate the free template"
                 }
               ]
             }
