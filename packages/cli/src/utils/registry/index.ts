@@ -13,6 +13,7 @@ import deepmerge from "deepmerge"
 import { HttpsProxyAgent } from "https-proxy-agent"
 import fetch from "node-fetch"
 import { z } from "zod"
+import { getProjectInfo } from "@/src/utils/get-project-info"
 
 const REGISTRY_URL = process.env.REGISTRY_URL || "https://template.tiptap.dev"
 
@@ -153,13 +154,25 @@ export async function registryResolveItemsTree(
       return null
     }
 
+    const projectInfo = await getProjectInfo(config.resolvedPaths.cwd)
+    const framework = projectInfo?.framework.name
+
+    const allDependencies = deepmerge.all(
+      payload.map((item) => item.dependencies ?? [])
+    )
+
+    const allDevDependencies = deepmerge.all(
+      payload.map((item) => item.devDependencies ?? [])
+    )
+
+    const filteredDevDependencies = filterDevDependenciesByFramework(
+      allDevDependencies,
+      framework
+    )
+
     return registryResolvedItemsTreeSchema.parse({
-      dependencies: deepmerge.all(
-        payload.map((item) => item.dependencies ?? [])
-      ),
-      devDependencies: deepmerge.all(
-        payload.map((item) => item.devDependencies ?? [])
-      ),
+      dependencies: allDependencies,
+      devDependencies: filteredDevDependencies,
       files: deepmerge.all(payload.map((item) => item.files ?? [])),
     })
   } catch (error) {
@@ -289,4 +302,45 @@ export function getRegistryParentMap(
   })
 
   return map
+}
+
+/**
+ * Filter development dependencies based on framework requirements
+ * @param devDependencies Array of development dependencies
+ * @param framework Framework name
+ * @returns Filtered array of development dependencies
+ */
+function filterDevDependenciesByFramework(
+  devDependencies: unknown,
+  framework: string | undefined
+): string[] {
+  // Ensure we have a proper string array
+  const depsArray = Array.isArray(devDependencies) ? devDependencies : []
+
+  if (!depsArray.length) {
+    return []
+  }
+
+  const stringDeps = depsArray.map((dep) => String(dep))
+
+  const hasSass = stringDeps.includes("sass")
+  const hasSassEmbedded = stringDeps.includes("sass-embedded")
+
+  if (hasSass && hasSassEmbedded) {
+    let filteredDeps = [...stringDeps]
+
+    if (framework) {
+      if (framework === "vite") {
+        // Vite prefers sass-embedded
+        filteredDeps = filteredDeps.filter((dep) => dep !== "sass")
+      } else if (framework === "next-app" || framework === "next-pages") {
+        // Next.js prefers sass
+        filteredDeps = filteredDeps.filter((dep) => dep !== "sass-embedded")
+      }
+    }
+
+    return filteredDeps
+  }
+
+  return stringDeps
 }
