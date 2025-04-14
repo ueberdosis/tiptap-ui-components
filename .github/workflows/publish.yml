@@ -1,10 +1,12 @@
 name: Publish
 
+env:
+  PNPM_VERSION: 9.0.0
+
 on:
   push:
     branches:
       - main
-      - develop
   # manual trigger for other branches
   workflow_dispatch:
 
@@ -30,6 +32,11 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -47,22 +54,25 @@ jobs:
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm i
+
+      - name: Setup npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
 
       - name: Create Release PR or publish stable version to npm
         id: changesets
         uses: changesets/action@v1
         with:
           createGithubReleases: false
-          publish: npm run publish
-          version: npm run version
+          publish: pnpm run pub:release --tag ${{ github.ref_name == 'next' && 'next'  || 'latest' }}
+          version: pnpm run version
           title: ${{ github.ref_name == 'main' && 'Publish a new stable version'  || 'Publish a new pre-release version' }}
           commit: >-
             ${{ github.ref_name == 'main' && 'chore(release): publish a new release version'  || 'chore(release): publish a new pre-release version' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NPM_CONFIG_PROVENANCE: true
+          NPM_CONFIG_ACCESS: public
 
       - name: Send release notification
         if: steps.changesets.outputs.published == 'true'
@@ -71,7 +81,7 @@ jobs:
         with:
           payload: |
             {
-              "message": "[Tiptap UI Release]: New Tiptap UI version has been released to NPM."
+              "message": "[Tiptap CLI Release]: New Tiptap CLI version has been released to NPM."
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -83,7 +93,7 @@ jobs:
         with:
           payload: |
             {
-              "message": "[Tiptap UI Release]: There was an issue publishing a new version. You can find the logs here: https://github.com/ueberdosis/tiptap/actions/runs/${{ github.run_id }}"
+              "message": "[Tiptap CLI Release]: There was an issue publishing a new version. You can find the logs here: https://github.com/ueberdosis/tiptap-ui-components/actions/runs/${{ github.run_id }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

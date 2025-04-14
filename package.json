@@ -9,9 +9,12 @@
     "web:dev": "pnpm --filter=web dev",
     "tiptap-cli": "pnpm --filter=tiptap-cli start:dev",
     "pub:beta": "cd packages/cli && pnpm pub:beta",
-    "pub:release": "cd packages/cli && pnpm pub:release"
+    "pub:release": "cd packages/cli && pnpm pub:release",
+    "changeset": "changeset",
+    "version": "pnpm run changeset -- version && pnpm install --no-frozen-lockfile"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.0",
     "eslint": "^8.57.1",
     "prettier": "^3.5.3",
     "turbo": "^2.5.0"
