@@ -2,7 +2,7 @@
 import { add } from "@/src/commands/add"
 import { info } from "@/src/commands/info"
 import { init } from "@/src/commands/init"
-import { login, status } from "@/src/commands/auth"
+// import { login, status } from "@/src/commands/auth"
 import { Command } from "commander"
 
 import packageJson from "../package.json"
@@ -20,12 +20,9 @@ async function main() {
       "display the version number"
     )
 
-  program
-    .addCommand(init)
-    .addCommand(add)
-    .addCommand(info)
-    .addCommand(login)
-    .addCommand(status)
+  program.addCommand(init).addCommand(add).addCommand(info)
+  // .addCommand(login)
+  // .addCommand(status)
 
   program.parse()
 }
