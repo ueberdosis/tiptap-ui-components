@@ -278,7 +278,7 @@ export function getRegistryTypeAliasMap() {
     ["registry:hook", "hooks"],
     ["registry:lib", "lib"],
     ["registry:context", "components"],
-    ["registry:template", "templates"],
+    ["registry:template", "tiptapTemplates"],
     ["registry:component", "components"],
     ["registry:icon", "titpapIcons"],
     ["registry:style", "styles"],

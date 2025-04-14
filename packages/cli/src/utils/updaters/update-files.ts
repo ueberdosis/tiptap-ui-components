@@ -389,10 +389,10 @@ export function resolveFilePath(
   // Special handling for template files without targets
   if (
     !file.target &&
-    file.path.includes("templates/") &&
+    file.path.includes("tiptap-templates/") &&
     file.type !== "registry:page"
   ) {
-    const match = file.path.match(/templates\/([^/]+)\/(.*)/)
+    const match = file.path.match(/tiptap-templates\/([^/]+)\/(.*)/)
     if (match) {
       const [, templateName, relativePath] = match
 
@@ -401,7 +401,7 @@ export function resolveFilePath(
         const finalPath = relativePath.replace("components/", "")
         return path.join(
           config.resolvedPaths.components,
-          "templates",
+          "tiptap-templates",
           templateName,
           finalPath
         )
@@ -410,7 +410,7 @@ export function resolveFilePath(
       // For data and other files
       return path.join(
         config.resolvedPaths.components,
-        "templates",
+        "tiptap-templates",
         templateName,
         relativePath
       )
@@ -420,16 +420,16 @@ export function resolveFilePath(
   // Special handling for data files with targets in templates
   if (
     file.target &&
-    file.path.includes("templates/") &&
+    file.path.includes("tiptap-templates/") &&
     file.target.includes("/data/")
   ) {
-    const templateMatch = file.path.match(/templates\/([^/]+)\//)
+    const templateMatch = file.path.match(/tiptap-templates\/([^/]+)\//)
     if (templateMatch) {
       const templateName = templateMatch[1]
       const dataPath = file.target.split("/data/")[1]
       return path.join(
         config.resolvedPaths.components,
-        "templates",
+        "tiptap-templates",
         templateName,
         "data",
         dataPath
