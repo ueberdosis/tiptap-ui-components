@@ -344,7 +344,7 @@ export async function promptForRegistryComponents(
 
 export const add = new Command()
   .name("add")
-  .description("add a component to your project")
+  .description("add Tiptap components and templates to your project")
   .argument("[components...]", "the components to add")
   .option(
     "-c, --cwd <cwd>",
