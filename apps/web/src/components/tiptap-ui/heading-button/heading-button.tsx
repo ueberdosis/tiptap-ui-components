@@ -5,12 +5,12 @@ import { isNodeSelection, type Editor } from "@tiptap/react"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Icons ---
-import { HeadingOneIcon } from "@/components/icons/heading-one-icon"
-import { HeadingTwoIcon } from "@/components/icons/heading-two-icon"
-import { HeadingThreeIcon } from "@/components/icons/heading-three-icon"
-import { HeadingFourIcon } from "@/components/icons/heading-four-icon"
-import { HeadingFiveIcon } from "@/components/icons/heading-five-icon"
-import { HeadingSixIcon } from "@/components/icons/heading-six-icon"
+import { HeadingOneIcon } from "@/components/tiptap-icons/heading-one-icon"
+import { HeadingTwoIcon } from "@/components/tiptap-icons/heading-two-icon"
+import { HeadingThreeIcon } from "@/components/tiptap-icons/heading-three-icon"
+import { HeadingFourIcon } from "@/components/tiptap-icons/heading-four-icon"
+import { HeadingFiveIcon } from "@/components/tiptap-icons/heading-five-icon"
+import { HeadingSixIcon } from "@/components/tiptap-icons/heading-six-icon"
 
 // --- Lib ---
 import { isNodeInSchema } from "@/lib/tiptap-utils"

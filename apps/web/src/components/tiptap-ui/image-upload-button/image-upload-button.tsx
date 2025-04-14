@@ -5,7 +5,7 @@ import { type Editor } from "@tiptap/react"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Icons ---
-import { ImagePlusIcon } from "@/components/icons/image-plus-icon"
+import { ImagePlusIcon } from "@/components/tiptap-icons/image-plus-icon"
 
 // --- UI Primitives ---
 import { Button, ButtonProps } from "@/components/tiptap-ui-primitive/button"

@@ -5,10 +5,10 @@ import { isNodeSelection, type Editor } from "@tiptap/react"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Icons ---
-import { CornerDownLeftIcon } from "@/components/icons/corner-down-left-icon"
-import { ExternalLinkIcon } from "@/components/icons/external-link-icon"
-import { LinkIcon } from "@/components/icons/link-icon"
-import { TrashIcon } from "@/components/icons/trash-icon"
+import { CornerDownLeftIcon } from "@/components/tiptap-icons/corner-down-left-icon"
+import { ExternalLinkIcon } from "@/components/tiptap-icons/external-link-icon"
+import { LinkIcon } from "@/components/tiptap-icons/link-icon"
+import { TrashIcon } from "@/components/tiptap-icons/trash-icon"
 
 // --- Lib ---
 import { isMarkInSchema } from "@/lib/tiptap-utils"

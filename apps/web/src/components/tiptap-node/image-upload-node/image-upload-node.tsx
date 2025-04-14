@@ -1,7 +1,7 @@
 import * as React from "react"
 import type { NodeViewProps } from "@tiptap/react"
 import { NodeViewWrapper } from "@tiptap/react"
-import { CloseIcon } from "@/components/icons/close-icon"
+import { CloseIcon } from "@/components/tiptap-icons/close-icon"
 import "@/components/tiptap-node/image-upload-node/image-upload-node.scss"
 
 export interface FileItem {

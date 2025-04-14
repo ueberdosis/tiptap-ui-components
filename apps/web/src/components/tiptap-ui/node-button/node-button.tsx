@@ -5,8 +5,8 @@ import { isNodeSelection, type Editor } from "@tiptap/react"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Icons ---
-import { BlockQuoteIcon } from "@/components/icons/block-quote-icon"
-import { CodeBlockIcon } from "@/components/icons/code-block-icon"
+import { BlockQuoteIcon } from "@/components/tiptap-icons/block-quote-icon"
+import { CodeBlockIcon } from "@/components/tiptap-icons/code-block-icon"
 
 // --- Lib ---
 import { isNodeInSchema } from "@/lib/tiptap-utils"

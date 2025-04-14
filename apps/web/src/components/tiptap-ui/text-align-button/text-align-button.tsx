@@ -5,10 +5,10 @@ import { type Editor, type ChainedCommands } from "@tiptap/react"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Icons ---
-import { AlignCenterIcon } from "@/components/icons/align-center-icon"
-import { AlignJustifyIcon } from "@/components/icons/align-justify-icon"
-import { AlignLeftIcon } from "@/components/icons/align-left-icon"
-import { AlignRightIcon } from "@/components/icons/align-right-icon"
+import { AlignCenterIcon } from "@/components/tiptap-icons/align-center-icon"
+import { AlignJustifyIcon } from "@/components/tiptap-icons/align-justify-icon"
+import { AlignLeftIcon } from "@/components/tiptap-icons/align-left-icon"
+import { AlignRightIcon } from "@/components/tiptap-icons/align-right-icon"
 
 // --- UI Primitives ---
 import { Button, ButtonProps } from "@/components/tiptap-ui-primitive/button"

@@ -5,8 +5,8 @@ import { isNodeSelection, type Editor } from "@tiptap/react"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Icons ---
-import { ChevronDownIcon } from "@/components/icons/chevron-down-icon"
-import { HeadingIcon } from "@/components/icons/heading-icon"
+import { ChevronDownIcon } from "@/components/tiptap-icons/chevron-down-icon"
+import { HeadingIcon } from "@/components/tiptap-icons/heading-icon"
 
 // --- Lib ---
 import { isNodeInSchema } from "@/lib/tiptap-utils"

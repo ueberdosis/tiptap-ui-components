@@ -8,6 +8,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,js}\"",
     "web:dev": "pnpm --filter=web dev",
     "tiptap-cli": "pnpm --filter=tiptap-cli start:dev",
+    "pub:beta": "cd packages/cli && pnpm pub:beta",
     "pub:release": "cd packages/cli && pnpm pub:release"
   },
   "devDependencies": {
