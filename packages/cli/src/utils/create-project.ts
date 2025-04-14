@@ -477,6 +477,17 @@ npm run dev
 ```
 or yarn or pnpm.
 
+### Include Global Styles
+To apply the correct styles to the editor, manually import these files into your main CSS/SCSS entry point:
+
+```jsx
+@import 'path-to/_variables.scss';
+@import 'path-to/_keyframes-animations.scss';
+```
+
+Make sure the path matches your project structure.
+
+
 ### Access the template
 Once the server is running, you can access the Tiptap Simple Editor template by visiting the /simple route in your application.
 
