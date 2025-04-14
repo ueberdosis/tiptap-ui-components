@@ -9,7 +9,7 @@ import { getProjectInfo } from "./get-project-info"
 export const DEFAULT_COMPONENTS = "@/components"
 export const DEFAULT_CONTEXTS = "@/contexts"
 export const DEFAULT_HOOKS = "@/hooks"
-export const DEFAULT_ICONS = "@/components/icons"
+export const DEFAULT_TIPTAP_ICONS = "@/components/tiptap-icons"
 export const DEFAULT_LIB = "@/lib"
 export const DEFAULT_TIPTAP_EXTENSIONS = "@/components/tiptap-extension"
 export const DEFAULT_TIPTAP_NODES = "@/components/tiptap-node"
@@ -28,7 +28,7 @@ export const rawConfigSchema = z.object({
     components: z.string(),
     contexts: z.string().optional(),
     hooks: z.string().optional(),
-    icons: z.string().optional(),
+    tiptapIcons: z.string().optional(),
     lib: z.string().optional(),
     tiptapExtensions: z.string().optional(),
     tiptapNodes: z.string().optional(),
@@ -44,7 +44,7 @@ export const configSchema = rawConfigSchema.extend({
     components: z.string(),
     contexts: z.string(),
     hooks: z.string(),
-    icons: z.string(),
+    tiptapIcons: z.string(),
     lib: z.string(),
     tiptapExtensions: z.string(),
     tiptapNodes: z.string(),
@@ -73,7 +73,7 @@ export async function getConfig(cwd: string) {
         components: DEFAULT_COMPONENTS,
         contexts: DEFAULT_CONTEXTS,
         hooks: DEFAULT_HOOKS,
-        icons: DEFAULT_ICONS,
+        tiptapIcons: DEFAULT_TIPTAP_ICONS,
         lib: DEFAULT_LIB,
         tiptapExtensions: DEFAULT_TIPTAP_EXTENSIONS,
         tiptapNodes: DEFAULT_TIPTAP_NODES,
@@ -89,7 +89,7 @@ export async function getConfig(cwd: string) {
       components: config.aliases.components ?? DEFAULT_COMPONENTS,
       contexts: config.aliases.contexts ?? DEFAULT_CONTEXTS,
       hooks: config.aliases.hooks ?? DEFAULT_HOOKS,
-      icons: config.aliases.icons ?? DEFAULT_ICONS,
+      tiptapIcons: config.aliases.tiptapIcons ?? DEFAULT_TIPTAP_ICONS,
       lib: config.aliases.lib ?? DEFAULT_LIB,
       tiptapExtensions:
         config.aliases.tiptapExtensions ?? DEFAULT_TIPTAP_EXTENSIONS,
@@ -135,11 +135,11 @@ export async function resolveConfigPaths(cwd: string, config: RawConfig) {
             "..",
             "hooks"
           ),
-      icons: config.aliases.icons
-        ? await resolveImport(config.aliases.icons, tsConfig)
+      tiptapIcons: config.aliases.tiptapIcons
+        ? await resolveImport(config.aliases.tiptapIcons, tsConfig)
         : path.resolve(
             (await resolveImport(config.aliases.components, tsConfig)) ?? cwd,
-            "icons"
+            "tiptap-icons"
           ),
       lib: config.aliases.lib
         ? await resolveImport(config.aliases.lib, tsConfig)

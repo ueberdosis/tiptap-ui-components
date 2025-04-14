@@ -1,6 +1,6 @@
 {
   "name": "tiptap-cli",
-  "version": "1.1.6",
+  "version": "1.1.10",
   "description": "Tiptap CLI",
   "publishConfig": {
     "access": "public"

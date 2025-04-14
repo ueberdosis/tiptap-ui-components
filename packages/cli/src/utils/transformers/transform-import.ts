@@ -78,8 +78,14 @@ function updateImportAliases(moduleSpecifier: string, config: Config): string {
     return moduleSpecifier.replace(/@\/registry\/hooks/, config.aliases.hooks)
   }
 
-  if (config.aliases.icons && moduleSpecifier.match(/@\/registry\/icons/)) {
-    return moduleSpecifier.replace(/@\/registry\/icons/, config.aliases.icons)
+  if (
+    config.aliases.tiptapIcons &&
+    moduleSpecifier.match(/@\/registry\/tiptap-icons/)
+  ) {
+    return moduleSpecifier.replace(
+      /@\/registry\/tiptap-icons/,
+      config.aliases.tiptapIcons
+    )
   }
 
   if (config.aliases.lib && moduleSpecifier.match(/@\/registry\/lib/)) {

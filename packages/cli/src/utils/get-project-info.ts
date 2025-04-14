@@ -186,7 +186,7 @@ export async function getProjectConfig(
       components: `${projectInfo.aliasPrefix}/components`,
       contexts: `${projectInfo.aliasPrefix}/contexts`,
       hooks: `${projectInfo.aliasPrefix}/hooks`,
-      icons: `${projectInfo.aliasPrefix}/components/icons`,
+      tiptapIcons: `${projectInfo.aliasPrefix}/components/tiptap-icons`,
       lib: `${projectInfo.aliasPrefix}/lib`,
       tiptapExtensions: `${projectInfo.aliasPrefix}/components/tiptap-extensions`,
       tiptapNodes: `${projectInfo.aliasPrefix}/components/tiptap-nodes`,

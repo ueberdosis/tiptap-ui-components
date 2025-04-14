@@ -237,7 +237,7 @@ export function resolveFileTargetDirectory(
   }
 
   if (file.type === "registry:icon") {
-    return config.resolvedPaths.icons
+    return config.resolvedPaths.tiptapIcons
   }
 
   if (file.type === "registry:hook") {
