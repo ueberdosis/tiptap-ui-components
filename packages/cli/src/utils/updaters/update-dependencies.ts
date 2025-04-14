@@ -3,6 +3,7 @@ import { getPackageManager } from "@/src/utils/get-package-manager"
 import { RegistryItem } from "@/src/utils/registry/schema"
 import { spinner } from "@/src/utils/spinner"
 import { execa } from "execa"
+import { colors } from "@/src/utils/colors"
 
 export async function updateDependencies(
   dependencies: RegistryItem["dependencies"],
@@ -23,10 +24,8 @@ export async function updateDependencies(
 
   const dependenciesSpinner = spinner(`Installing dependencies.`, {
     silent: options.silent,
-  })?.start()
+  }).start()
   const packageManager = await getPackageManager(config.resolvedPaths.cwd)
-
-  dependenciesSpinner?.start()
 
   await execa(
     packageManager,
@@ -40,5 +39,7 @@ export async function updateDependencies(
     }
   )
 
-  dependenciesSpinner?.succeed()
+  dependenciesSpinner.stopAndPersist({
+    symbol: colors.cyan("✔"),
+  })
 }

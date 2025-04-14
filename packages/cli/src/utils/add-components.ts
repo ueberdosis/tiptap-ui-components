@@ -66,13 +66,16 @@ async function addProjectComponents(
 ) {
   const registrySpinner = spinner(`Checking registry.`, {
     silent: options.silent,
-  })?.start()
+  }).start()
   const tree = await registryResolveItemsTree(components, config)
   if (!tree) {
     registrySpinner?.fail()
     return handleError(new Error("Failed to fetch components from registry."))
   }
-  registrySpinner?.succeed()
+
+  registrySpinner.stopAndPersist({
+    symbol: colors.cyan("✔"),
+  })
 
   await updateDependencies(tree.dependencies, config, {
     silent: options.silent,
@@ -100,7 +103,7 @@ async function addWorkspaceComponents(
 ) {
   const registrySpinner = spinner(`Checking registry.`, {
     silent: options.silent,
-  })?.start()
+  }).start()
   const registryItems = await resolveRegistryItems(components, config)
   const result = await fetchRegistry(registryItems, config)
 

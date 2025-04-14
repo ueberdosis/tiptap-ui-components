@@ -3,6 +3,7 @@ import { getPackageManager } from "@/src/utils/get-package-manager"
 import { RegistryItem } from "@/src/utils/registry/schema"
 import { spinner } from "@/src/utils/spinner"
 import { execa } from "execa"
+import { colors } from "@/src/utils/colors"
 
 /**
  * Installs development dependencies for a component
@@ -49,5 +50,7 @@ export async function updateDevDependencies(
     }
   )
 
-  devDependenciesSpinner?.succeed()
+  devDependenciesSpinner?.stopAndPersist({
+    symbol: colors.cyan("✔"),
+  })
 }
