@@ -350,7 +350,7 @@ export const add = new Command()
   .option("-o, --overwrite", "overwrite existing files.", false)
   .option(
     "-c, --cwd <cwd>",
-    "the working directory. defaults to the current directory.",
+    "the working directory. Defaults to the current directory.",
     process.cwd()
   )
   .option("-p, --path <path>", "the path to add the component to.")

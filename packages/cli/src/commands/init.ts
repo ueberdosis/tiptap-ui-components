@@ -78,7 +78,7 @@ export const init = new Command()
   .option("-f, --framework <framework>", "the framework to use. (next, vite)")
   .option(
     "-c, --cwd <cwd>",
-    "the working directory. defaults to the current directory.",
+    "the working directory. Defaults to the current directory.",
     process.cwd()
   )
   .option("-s, --silent", "mute output.", false)

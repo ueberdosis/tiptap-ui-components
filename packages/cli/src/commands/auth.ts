@@ -262,7 +262,7 @@ export const login = new Command()
   )
   .option(
     "-c, --cwd <cwd>",
-    "the working directory. defaults to the current directory.",
+    "the working directory. Defaults to the current directory.",
     process.cwd()
   )
   .action(async (options) => {
@@ -279,7 +279,7 @@ export const status = new Command()
   .description("check your Tiptap registry authentication status")
   .option(
     "-c, --cwd <cwd>",
-    "the working directory. defaults to the current directory.",
+    "the working directory. Defaults to the current directory.",
     process.cwd()
   )
   .action(async (options) => {
