@@ -1,3 +1,4 @@
+import chalk from "chalk"
 import ora, { type Options } from "ora"
 
 export function spinner(
@@ -7,7 +8,7 @@ export function spinner(
   }
 ) {
   return ora({
-    text,
+    text: chalk.bold(text),
     isSilent: options?.silent,
   })
 }

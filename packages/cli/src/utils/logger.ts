@@ -1,17 +1,17 @@
-import { highlighter } from "@/src/utils/highlighter"
+import { colors } from "@/src/utils/colors"
 
 export const logger = {
   error(...args: unknown[]) {
-    console.log(highlighter.error(args.join(" ")))
+    console.log(colors.red(args.join(" ")))
   },
   warn(...args: unknown[]) {
-    console.log(highlighter.warn(args.join(" ")))
+    console.log(colors.yellow(args.join(" ")))
   },
   info(...args: unknown[]) {
-    console.log(highlighter.info(args.join(" ")))
+    console.log(colors.blue(args.join(" ")))
   },
   success(...args: unknown[]) {
-    console.log(highlighter.success(args.join(" ")))
+    console.log(colors.green(args.join(" ")))
   },
   log(...args: unknown[]) {
     console.log(args.join(" "))

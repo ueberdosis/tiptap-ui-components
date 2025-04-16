@@ -7,7 +7,6 @@ import { preFlightAdd } from "@/src/preflights/preflight-add"
 import { addComponents } from "@/src/utils/add-components"
 import * as ERRORS from "@/src/utils/errors"
 import { handleError } from "@/src/utils/handle-error"
-import { highlighter } from "@/src/utils/highlighter"
 import { logger } from "@/src/utils/logger"
 import { fetchFreeRegistry, getRegistryIndex } from "@/src/utils/registry"
 import { colors } from "@/src/utils/colors"
@@ -44,7 +43,7 @@ const PLANS = {
 const PROMPT_PAGE_SIZE = 1_000 // Large size to avoid help tip
 
 const UI = {
-  divider: colors.gray("-----------------------------------------"),
+  divider: colors.gray("----------------------------------------------"),
   warning: colors.magenta(
     "  Some components (marked as Paid) require an active subscription!"
   ),
@@ -62,11 +61,10 @@ const PROMPT_THEME = {
   },
   style: {
     highlight: (text: string) => colors.cyan(text),
-    answer: (text: string) => colors.white(text),
   },
   prefix: {
     done: colors.cyan("✔"),
-    idle: colors.white("?"),
+    idle: "?",
   },
   helpMode: "always" as const,
 }
@@ -133,9 +131,10 @@ const categorizeRegistryItems = (
  * Prompts user to select between components and templates
  */
 async function promptForInitialSelection(
-  categories: CategoryMap
+  categories: CategoryMap,
+  showDivider = true
 ): Promise<"components" | "templates" | null> {
-  const message = colors.white("What would you like to integrate:")
+  const message = "What would you like to integrate:"
   const instructions = createInstruction(
     "  Use arrow-keys ▲▼ / [Return] to submit"
   )
@@ -160,7 +159,10 @@ async function promptForInitialSelection(
   }
 
   try {
-    console.log(UI.divider)
+    if (showDivider) {
+      console.log(UI.divider)
+    }
+
     const selection = await select({
       message,
       instructions,
@@ -168,7 +170,11 @@ async function promptForInitialSelection(
       theme: PROMPT_THEME,
       choices,
     })
-    console.log(UI.divider)
+
+    if (showDivider) {
+      console.log(UI.divider)
+    }
+
     return selection as "templates" | "components"
   } catch (error) {
     clearPromptLines(4)
@@ -237,7 +243,7 @@ async function componentMenu(
 
   try {
     const selectedComponents = await checkbox({
-      message: colors.white("Select the components you want to add:"),
+      message: "Select the components you want to add:",
       instructions,
       required: true,
       pageSize: 20,
@@ -259,10 +265,10 @@ async function componentMenu(
  */
 async function templateMenu(
   templates: RegistryItemIndexSchema
-): Promise<string> {
+): Promise<string[]> {
   try {
     const instructions = createInstruction(
-      "  Use arrow-keys ▲▼ / [Return] to submit"
+      `${UI.warning}\n  [Space] to select / [A] to toggle all / [I] to invert / [Return] to submit`
     )
 
     const choices = templates.map((template) => {
@@ -277,17 +283,18 @@ async function templateMenu(
       }
     })
 
-    return await select({
-      message: colors.white("Select the template you want to add:"),
+    return await checkbox({
+      message: "Select the templates you want to add:",
       instructions,
-      pageSize: PROMPT_PAGE_SIZE,
+      required: true,
+      pageSize: 20,
       choices,
-      theme: PROMPT_THEME,
+      theme: CHECKBOX_THEME,
     })
   } catch (error) {
-    clearPromptLines(4)
+    clearPromptLines(25) // Adjust for more lines in the checkbox menu
     console.log(UI.operationCancelled)
-    return ""
+    return []
   }
 }
 
@@ -295,7 +302,8 @@ async function templateMenu(
  * Main function to prompt for registry components
  */
 export async function promptForRegistryComponents(
-  options: AddOptions
+  options: AddOptions,
+  showDivider = true
 ): Promise<string[]> {
   if (options.components?.length) {
     return options.components
@@ -313,7 +321,7 @@ export async function promptForRegistryComponents(
   const visibleRegistryItems = registryIndex.filter(Boolean)
   const categories = categorizeRegistryItems(visibleRegistryItems)
 
-  const selection = await promptForInitialSelection(categories)
+  const selection = await promptForInitialSelection(categories, showDivider)
 
   if (!selection) {
     return []
@@ -335,8 +343,8 @@ export async function promptForRegistryComponents(
         categories.templates,
         freeComponents
       )
-      const templateResult = await templateMenu(filteredTemplates)
-      return templateResult ? [templateResult] : []
+      const templateResults = await templateMenu(filteredTemplates)
+      return templateResults || []
     }
     default:
       return []
@@ -380,9 +388,7 @@ export const add = new Command()
       }
 
       if (!config) {
-        throw new Error(
-          `Failed to read config at ${highlighter.info(options.cwd)}.`
-        )
+        throw new Error(`Failed to read config at ${colors.blue(options.cwd)}.`)
       }
 
       await addComponents(options.components, config, options)

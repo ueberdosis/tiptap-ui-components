@@ -2,11 +2,9 @@ import { Command } from "commander"
 import { execa } from "execa"
 import { z } from "zod"
 import { confirm, input, password as passwordPrompt } from "@inquirer/prompts"
-
 import { authenticateUser, checkAuthStatus } from "@/src/utils/auth"
 import { colors } from "@/src/utils/colors"
 import { handleError } from "@/src/utils/handle-error"
-import { highlighter } from "@/src/utils/highlighter"
 import { logger } from "@/src/utils/logger"
 import { getPackageManager } from "@/src/utils/get-package-manager"
 
@@ -31,7 +29,7 @@ const createThemedInput = (
   } = {}
 ) => {
   return input({
-    message: colors.white(message),
+    message,
     required: options.required ?? true,
     validate:
       options.validate ??
@@ -39,10 +37,7 @@ const createThemedInput = (
     theme: {
       prefix: {
         done: colors.cyan("✓"),
-        idle: colors.white("?"),
-      },
-      style: {
-        answer: (text: string) => colors.white(text),
+        idle: "?",
       },
     },
   })
@@ -58,7 +53,7 @@ const createThemedPassword = (
   } = {}
 ) => {
   return passwordPrompt({
-    message: colors.white(message),
+    message,
     validate:
       options.validate ??
       ((value: string) => (value ? true : "This field is required")),
@@ -66,10 +61,7 @@ const createThemedPassword = (
     theme: {
       prefix: {
         done: colors.cyan("✓"),
-        idle: colors.white("?"),
-      },
-      style: {
-        answer: (text: string) => colors.white(text),
+        idle: "?",
       },
     },
   })
@@ -80,16 +72,12 @@ const createThemedPassword = (
  */
 const createThemedConfirm = (message: string, defaultValue: boolean = true) => {
   return confirm({
-    message: colors.white(message),
+    message,
     default: defaultValue,
     theme: {
       prefix: {
         done: colors.cyan("✓"),
-        idle: colors.white("?"),
-      },
-      style: {
-        answer: (text: string) => colors.white(text),
-        message: (text: string) => colors.white(text),
+        idle: "?",
       },
     },
   })
@@ -219,10 +207,10 @@ async function handleLogin(options: AuthOptions) {
 
     if (writeConfig) {
       logger.info(
-        `Token saved for package manager: ${highlighter.info(packageManager)}`
+        `Token saved for package manager: ${colors.blue(packageManager)}`
       )
     } else if (result.token) {
-      logger.info(`\nToken: ${highlighter.info(result.token)}`)
+      logger.info(`\nToken: ${colors.blue(result.token)}`)
       await displayTokenInstructions(packageManager, result.token, cwd)
     }
   } else {
@@ -239,10 +227,10 @@ async function handleStatusCheck(cwd: string) {
 
   if (status.authenticated) {
     logger.success(
-      `Authenticated as ${highlighter.info(status.user ?? "unknown user")}`
+      `Authenticated as ${colors.blue(status.user ?? "unknown user")}`
     )
-    logger.info(`Account type: ${highlighter.info(status.plan || "Free")}`)
-    logger.info(`Token expires: ${highlighter.info(status.expires || "Never")}`)
+    logger.info(`Account type: ${colors.blue(status.plan || "Free")}`)
+    logger.info(`Token expires: ${colors.blue(status.expires || "Never")}`)
   } else {
     logger.info("Not authenticated with Tiptap registry")
     logger.info("Run `tiptap auth login` to authenticate")

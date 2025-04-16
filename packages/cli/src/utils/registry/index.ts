@@ -1,6 +1,5 @@
 import { Config, configSchema } from "@/src/utils/get-config"
 import { handleError } from "@/src/utils/handle-error"
-import { highlighter } from "@/src/utils/highlighter"
 import { logger } from "@/src/utils/logger"
 import {
   registryIndexSchema,
@@ -14,6 +13,8 @@ import { HttpsProxyAgent } from "https-proxy-agent"
 import fetch from "node-fetch"
 import { z } from "zod"
 import { getProjectInfo } from "@/src/utils/get-project-info"
+import { Framework, FRAMEWORKS } from "@/src/utils/frameworks"
+import { colors } from "@/src/utils/colors"
 
 const REGISTRY_URL = process.env.REGISTRY_URL || "https://template.tiptap.dev"
 
@@ -41,7 +42,7 @@ export async function fetchFreeRegistry() {
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch from ${highlighter.info(url)}.\n${response.statusText}`
+        `Failed to fetch from ${colors.blue(url)}.\n${response.statusText}`
       )
     }
 
@@ -87,7 +88,7 @@ export async function fetchRegistry(paths: string[], config?: Config) {
 
           if (response.status === 401) {
             throw new Error(
-              `You are not authorized to access the component at ${highlighter.info(
+              `You are not authorized to access the component at ${colors.blue(
                 url
               )}.\nPlease run 'tiptap auth login' to authenticate with the registry, or make sure your token is valid.`
             )
@@ -95,7 +96,7 @@ export async function fetchRegistry(paths: string[], config?: Config) {
 
           if (response.status === 404) {
             throw new Error(
-              `The component at ${highlighter.info(
+              `The component at ${colors.blue(
                 url
               )} was not found.\nIt may not exist at the registry. Please make sure it is a valid component.`
             )
@@ -103,7 +104,7 @@ export async function fetchRegistry(paths: string[], config?: Config) {
 
           if (response.status === 403) {
             throw new Error(
-              `You do not have access to the component at ${highlighter.info(
+              `You do not have access to the component at ${colors.blue(
                 url
               )}.\nYour account may not have the required subscription plan for this component.\nPlease upgrade your subscription or use a component available in your current plan.`
             )
@@ -115,7 +116,7 @@ export async function fetchRegistry(paths: string[], config?: Config) {
               ? result.error
               : response.statusText || errorMessages[response.status]
           throw new Error(
-            `Failed to fetch from ${highlighter.info(url)}.\n${message}`
+            `Failed to fetch from ${colors.blue(url)}.\n${message}`
           )
         }
 
@@ -155,7 +156,7 @@ export async function registryResolveItemsTree(
     }
 
     const projectInfo = await getProjectInfo(config.resolvedPaths.cwd)
-    const framework = projectInfo?.framework.name
+    const framework = projectInfo?.framework.name as Framework["name"]
 
     const allDependencies = deepmerge.all(
       payload.map((item) => item.dependencies ?? [])
@@ -312,9 +313,8 @@ export function getRegistryParentMap(
  */
 function filterDevDependenciesByFramework(
   devDependencies: unknown,
-  framework: string | undefined
+  framework: Framework["name"]
 ): string[] {
-  // Ensure we have a proper string array
   const depsArray = Array.isArray(devDependencies) ? devDependencies : []
 
   if (!depsArray.length) {
@@ -323,23 +323,39 @@ function filterDevDependenciesByFramework(
 
   const stringDeps = depsArray.map((dep) => String(dep))
 
-  const hasSass = stringDeps.includes("sass")
-  const hasSassEmbedded = stringDeps.includes("sass-embedded")
+  if (framework) {
+    const hasSass = stringDeps.includes("sass")
+    const hasSassEmbedded = stringDeps.includes("sass-embedded")
 
-  if (hasSass && hasSassEmbedded) {
-    let filteredDeps = [...stringDeps]
+    if (hasSass && hasSassEmbedded) {
+      let filteredDeps = [...stringDeps]
 
-    if (framework) {
-      if (framework === "vite") {
-        // Vite prefers sass-embedded
+      const prefersEmbedded: Framework["name"][] = [
+        FRAMEWORKS.astro.name,
+        FRAMEWORKS.laravel.name,
+        FRAMEWORKS.vite.name,
+        FRAMEWORKS.remix.name,
+        FRAMEWORKS["tanstack-start"].name,
+        FRAMEWORKS["react-router"].name,
+      ]
+
+      const prefersRegular: Framework["name"][] = [
+        FRAMEWORKS["next-app"].name,
+        FRAMEWORKS["next-pages"].name,
+        FRAMEWORKS.gatsby.name,
+      ]
+
+      if (prefersEmbedded.includes(framework)) {
+        // These frameworks prefer sass-embedded
         filteredDeps = filteredDeps.filter((dep) => dep !== "sass")
-      } else if (framework === "next-app" || framework === "next-pages") {
-        // Next.js prefers sass
+      } else if (prefersRegular.includes(framework)) {
+        // These frameworks prefer regular sass
         filteredDeps = filteredDeps.filter((dep) => dep !== "sass-embedded")
       }
-    }
 
-    return filteredDeps
+      // Default to regular sass if no preference is found
+      return filteredDeps.filter((dep) => dep !== "sass-embedded")
+    }
   }
 
   return stringDeps

@@ -60,7 +60,6 @@
     "fs-extra": "^11.3.0",
     "https-proxy-agent": "^7.0.6",
     "jsonc-parser": "^3.3.1",
-    "kleur": "^4.1.5",
     "node-fetch": "^3.3.2",
     "ora": "^8.2.0",
     "recast": "^0.23.11",
@@ -76,6 +75,6 @@
     "@types/fs-extra": "^11.0.4",
     "@types/prompts": "^2.4.9",
     "tsup": "^8.4.0",
-    "type-fest": "^4.39.1"
+    "type-fest": "^4.40.0"
   }
 }

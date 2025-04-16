@@ -11,9 +11,9 @@ import select from "@/src/inquirer/select"
 import { colors } from "@/src/utils/colors"
 import { getPackageManager } from "@/src/utils/get-package-manager"
 import { handleError } from "@/src/utils/handle-error"
-import { highlighter } from "@/src/utils/highlighter"
 import { logger } from "@/src/utils/logger"
 import { spinner } from "@/src/utils/spinner"
+import chalk from "chalk"
 
 const MONOREPO_FRAMEWORK_URL =
   "https://codeload.github.com/shadcn-ui/ui/tar.gz/main"
@@ -49,7 +49,7 @@ type CreateMonorepoOptions = {
  */
 const createThemedInput = (message: string, defaultValue: string = "") => {
   return input({
-    message: colors.white(message),
+    message,
     default: defaultValue,
     required: true,
     validate: (value: string) =>
@@ -57,10 +57,7 @@ const createThemedInput = (message: string, defaultValue: string = "") => {
     theme: {
       prefix: {
         done: colors.cyan("✔"),
-        idle: colors.white("?"),
-      },
-      style: {
-        answer: (text: string) => colors.white(text),
+        idle: "?",
       },
     },
   })
@@ -76,19 +73,15 @@ const createThemedSelect = async (
   const instructions = `\n${colors.gray("  Use arrow-keys ▲▼ / [Return] to submit")}\n`
 
   return select({
-    message: colors.white(message),
+    message,
     instructions,
     theme: {
       icon: {
         cursor: colors.cyan("❯"),
       },
-      style: {
-        highlight: (text: string) => colors.cyan(text),
-        answer: (text: string) => colors.white(text),
-      },
       prefix: {
         done: colors.cyan("✔"),
-        idle: colors.white("?"),
+        idle: "?",
       },
       helpMode: "always" as const,
     },
@@ -179,9 +172,9 @@ async function validateProjectPath(cwd: string, projectName: string) {
     await fs.access(cwd, fs.constants.W_OK)
   } catch (error) {
     logger.break()
-    logger.error(`The path ${highlighter.info(cwd)} is not writable.`)
+    logger.error(`The path ${colors.blue(cwd)} is not writable.`)
     logger.error(
-      `It is likely you do not have write permissions for this folder or the path ${highlighter.info(cwd)} does not exist.`
+      `It is likely you do not have write permissions for this folder or the path ${colors.blue(cwd)} does not exist.`
     )
     logger.break()
     process.exit(0)
@@ -191,7 +184,7 @@ async function validateProjectPath(cwd: string, projectName: string) {
   if (fs.existsSync(path.resolve(cwd, projectName, "package.json"))) {
     logger.break()
     logger.error(
-      `A project with the name ${highlighter.info(projectName)} already exists.`
+      `A project with the name ${colors.blue(projectName)} already exists.`
     )
     logger.error(`Please choose a different name and try again.`)
     logger.break()
@@ -386,7 +379,9 @@ async function createMonorepoProject(
 
     createSpinner?.stopAndPersist({
       symbol: colors.cyan("✔"),
-      text: `Created a new Next.js monorepo at ${highlighter.info(projectPath)}`,
+      text: chalk.bold(
+        `Created a new Next.js monorepo at ${colors.blue(projectPath)}`
+      ),
     })
   } catch (error) {
     createSpinner?.fail("Something went wrong creating a new Next.js monorepo.")
@@ -501,8 +496,7 @@ To learn more about the Tiptap Simple Editor and how to customize it, visit the 
 
   try {
     await fs.writeFile(readmePath, readmeContent, "utf-8")
-    console.log(`Updated README.md in ${projectPath}`)
-  } catch (error) {
-    console.error(`Error updating README.md: ${error}`)
+  } catch {
+    /* empty */
   }
 }
