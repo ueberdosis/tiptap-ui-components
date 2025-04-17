@@ -7,43 +7,35 @@ export function useWindowSize() {
     offsetTop: 0,
   })
 
-  const handleResize = React.useCallback(() => {
-    if (typeof window !== "undefined") {
-      const width = window.visualViewport?.width || window.innerWidth
-      const height = window.visualViewport?.height || window.innerHeight
-      const offsetTop = window.visualViewport?.offsetTop || 0
-
-      setWindowSize((state) => {
-        if (
-          width === state.width &&
-          height === state.height &&
-          offsetTop === state.offsetTop
-        ) {
-          return state
-        }
-
-        return { width, height, offsetTop }
-      })
-    }
-  }, [])
-
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      handleResize()
+    const handleResize = () => {
+      if (typeof window !== "undefined") {
+        const width = window.visualViewport?.width || 0
+        const height = window.visualViewport?.height || 0
+        const offsetTop = window.visualViewport?.offsetTop || 0
 
-      window.addEventListener("resize", handleResize)
-      window.visualViewport?.addEventListener("resize", handleResize)
-      window.visualViewport?.addEventListener("scroll", handleResize)
+        setWindowSize((state) => {
+          if (
+            width === state.width &&
+            height === state.height &&
+            offsetTop === state.offsetTop
+          ) {
+            return state
+          }
 
-      return () => {
-        window.removeEventListener("resize", handleResize)
-        window.visualViewport?.removeEventListener("resize", handleResize)
-        window.visualViewport?.removeEventListener("scroll", handleResize)
+          return { width, height, offsetTop }
+        })
       }
     }
 
-    return () => {}
-  }, [handleResize])
+    window.visualViewport?.addEventListener("resize", handleResize)
+    window.visualViewport?.addEventListener("scroll", handleResize)
+
+    return () => {
+      window.visualViewport?.removeEventListener("resize", handleResize)
+      window.visualViewport?.removeEventListener("scroll", handleResize)
+    }
+  }, [])
 
   return windowSize
 }

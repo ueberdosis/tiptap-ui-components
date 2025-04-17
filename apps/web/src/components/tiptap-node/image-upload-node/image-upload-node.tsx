@@ -386,7 +386,6 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
       className="tiptap-image-upload"
       tabIndex={0}
       onClick={handleClick}
-      contentEditable={false}
     >
       {!fileItem && (
         <ImageUploadDragArea onFile={handleUpload}>
