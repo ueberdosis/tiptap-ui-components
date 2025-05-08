@@ -41,10 +41,10 @@ import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu"
 import { BlockQuoteButton } from "@/components/tiptap-ui/blockquote-button"
 import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button"
 import {
-  HighlightPopover,
-  HighlightContent,
-  HighlighterButton,
-} from "@/components/tiptap-ui/highlight-popover"
+  ColorHighlightPopover,
+  ColorHighlightPopoverContent,
+  ColorHighlightPopoverButton,
+} from "@/components/tiptap-ui/color-highlight-popover"
 import {
   LinkPopover,
   LinkContent,
@@ -111,9 +111,9 @@ const MainToolbarContent = ({
         <MarkButton type="code" />
         <MarkButton type="underline" />
         {!isMobile ? (
-          <HighlightPopover />
+          <ColorHighlightPopover />
         ) : (
-          <HighlighterButton onClick={onHighlighterClick} />
+          <ColorHighlightPopoverButton onClick={onHighlighterClick} />
         )}
         {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
       </ToolbarGroup>
@@ -172,7 +172,11 @@ const MobileToolbarContent = ({
 
     <ToolbarSeparator />
 
-    {type === "highlighter" ? <HighlightContent /> : <LinkContent />}
+    {type === "highlighter" ? (
+      <ColorHighlightPopoverContent />
+    ) : (
+      <LinkContent />
+    )}
   </>
 )
 
