@@ -17,7 +17,7 @@ import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
 import { Button } from "@/components/tiptap-ui-primitive/button"
 
 // --- Styles ---
-import "@/components/tiptap-ui/highlight-button/highlight-button.scss"
+import "@/components/tiptap-ui/color-highlight-button/color-highlight-button.scss"
 
 export const HIGHLIGHT_COLORS = [
   {
@@ -27,52 +27,52 @@ export const HIGHLIGHT_COLORS = [
   },
   {
     label: "Gray background",
-    value: "var(--tt-highlight-gray)",
-    border: "var(--tt-highlight-gray-contrast)",
+    value: "var(--tt-color-highlight-gray)",
+    border: "var(--tt-color-highlight-gray-contrast)",
   },
   {
     label: "Brown background",
-    value: "var(--tt-highlight-brown)",
-    border: "var(--tt-highlight-brown-contrast)",
+    value: "var(--tt-color-highlight-brown)",
+    border: "var(--tt-color-highlight-brown-contrast)",
   },
   {
     label: "Orange background",
-    value: "var(--tt-highlight-orange)",
-    border: "var(--tt-highlight-orange-contrast)",
+    value: "var(--tt-color-highlight-orange)",
+    border: "var(--tt-color-highlight-orange-contrast)",
   },
   {
     label: "Yellow background",
-    value: "var(--tt-highlight-yellow)",
-    border: "var(--tt-highlight-yellow-contrast)",
+    value: "var(--tt-color-highlight-yellow)",
+    border: "var(--tt-color-highlight-yellow-contrast)",
   },
   {
     label: "Green background",
-    value: "var(--tt-highlight-green)",
-    border: "var(--tt-highlight-green-contrast)",
+    value: "var(--tt-color-highlight-green)",
+    border: "var(--tt-color-highlight-green-contrast)",
   },
   {
     label: "Blue background",
-    value: "var(--tt-highlight-blue)",
-    border: "var(--tt-highlight-blue-contrast)",
+    value: "var(--tt-color-highlight-blue)",
+    border: "var(--tt-color-highlight-blue-contrast)",
   },
   {
     label: "Purple background",
-    value: "var(--tt-highlight-purple)",
-    border: "var(--tt-highlight-purple-contrast)",
+    value: "var(--tt-color-highlight-purple)",
+    border: "var(--tt-color-highlight-purple-contrast)",
   },
   {
     label: "Pink background",
-    value: "var(--tt-highlight-pink)",
-    border: "var(--tt-highlight-pink-contrast)",
+    value: "var(--tt-color-highlight-pink)",
+    border: "var(--tt-color-highlight-pink-contrast)",
   },
   {
     label: "Red background",
-    value: "var(--tt-highlight-red)",
-    border: "var(--tt-highlight-red-contrast)",
+    value: "var(--tt-color-highlight-red)",
+    border: "var(--tt-color-highlight-red-contrast)",
   },
 ]
 
-export interface HighlightButtonProps extends Omit<ButtonProps, "type"> {
+export interface ColorHighlightButtonProps extends Omit<ButtonProps, "type"> {
   /**
    * The TipTap editor instance.
    */
@@ -169,7 +169,7 @@ export function toggleHighlight(
 /**
  * Determines if the highlight button should be disabled
  */
-export function isHighlightButtonDisabled(
+export function isColorHighlightButtonDisabled(
   editor: Editor | null,
   userDisabled: boolean = false
 ): boolean {
@@ -186,7 +186,7 @@ export function isHighlightButtonDisabled(
 /**
  * Determines if the highlight button should be shown
  */
-export function shouldShowHighlightButton(
+export function shouldShowColorHighlightButton(
   editor: Editor | null,
   hideWhenUnavailable: boolean,
   highlightInSchema: boolean
@@ -215,12 +215,16 @@ export function useHighlightState(
   hideWhenUnavailable: boolean = false
 ) {
   const highlightInSchema = isMarkInSchema("highlight", editor)
-  const isDisabled = isHighlightButtonDisabled(editor, disabled)
+  const isDisabled = isColorHighlightButtonDisabled(editor, disabled)
   const isActive = isHighlightActive(editor, color)
 
   const shouldShow = React.useMemo(
     () =>
-      shouldShowHighlightButton(editor, hideWhenUnavailable, highlightInSchema),
+      shouldShowColorHighlightButton(
+        editor,
+        hideWhenUnavailable,
+        highlightInSchema
+      ),
     [editor, hideWhenUnavailable, highlightInSchema]
   )
 
@@ -233,11 +237,11 @@ export function useHighlightState(
 }
 
 /**
- * HighlightButton component for TipTap editor
+ * ColorHighlightButton component for TipTap editor
  */
-export const HighlightButton = React.forwardRef<
+export const ColorHighlightButton = React.forwardRef<
   HTMLButtonElement,
-  HighlightButtonProps
+  ColorHighlightButtonProps
 >(
   (
     {
@@ -321,6 +325,6 @@ export const HighlightButton = React.forwardRef<
   }
 )
 
-HighlightButton.displayName = "HighlightButton"
+ColorHighlightButton.displayName = "ColorHighlightButton"
 
-export default HighlightButton
+export default ColorHighlightButton

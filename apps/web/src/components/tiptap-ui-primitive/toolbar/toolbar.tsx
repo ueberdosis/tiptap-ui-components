@@ -114,8 +114,41 @@ const useToolbarKeyboardNav = (
       }
     }
 
+    const handleFocus = (e: FocusEvent) => {
+      const target = e.target as HTMLElement
+      if (toolbar.contains(target)) {
+        target.setAttribute("data-focus-visible", "true")
+      }
+    }
+
+    const handleBlur = (e: FocusEvent) => {
+      const target = e.target as HTMLElement
+      if (toolbar.contains(target)) {
+        target.removeAttribute("data-focus-visible")
+      }
+    }
+
     toolbar.addEventListener("keydown", handleKeyDown)
-    return () => toolbar.removeEventListener("keydown", handleKeyDown)
+    toolbar.addEventListener("focus", handleFocus, true)
+    toolbar.addEventListener("blur", handleBlur, true)
+
+    const focusableElements = getFocusableElements()
+    focusableElements.forEach((element) => {
+      element.addEventListener("focus", handleFocus)
+      element.addEventListener("blur", handleBlur)
+    })
+
+    return () => {
+      toolbar.removeEventListener("keydown", handleKeyDown)
+      toolbar.removeEventListener("focus", handleFocus, true)
+      toolbar.removeEventListener("blur", handleBlur, true)
+
+      const focusableElements = getFocusableElements()
+      focusableElements.forEach((element) => {
+        element.removeEventListener("focus", handleFocus)
+        element.removeEventListener("blur", handleBlur)
+      })
+    }
   }, [toolbarRef])
 }
 

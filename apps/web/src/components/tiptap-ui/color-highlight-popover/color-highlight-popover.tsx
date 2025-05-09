@@ -24,63 +24,63 @@ import { Separator } from "@/components/tiptap-ui-primitive/separator"
 
 // --- Tiptap UI ---
 import {
-  HighlightButton,
+  ColorHighlightButton,
   canToggleHighlight,
-} from "@/components/tiptap-ui/highlight-button"
+} from "@/components/tiptap-ui/color-highlight-button"
 
 // --- Styles ---
-import "@/components/tiptap-ui/highlight-popover/highlight-popover.scss"
+import "@/components/tiptap-ui/color-highlight-popover/color-highlight-popover.scss"
 
-export interface HighlightColor {
+export interface ColorHighlightPopoverColor {
   label: string
   value: string
   border?: string
 }
 
-export interface HighlightContentProps {
+export interface ColorHighlightPopoverContentProps {
   editor?: Editor | null
-  colors?: HighlightColor[]
+  colors?: ColorHighlightPopoverColor[]
   onClose?: () => void
 }
 
-export interface HighlightPopoverProps extends Omit<ButtonProps, "type"> {
+export interface ColorHighlightPopoverProps extends Omit<ButtonProps, "type"> {
   /** The TipTap editor instance. */
   editor?: Editor | null
   /** The highlight colors to display in the popover. */
-  colors?: HighlightColor[]
+  colors?: ColorHighlightPopoverColor[]
   /** Whether to hide the highlight popover when unavailable. */
   hideWhenUnavailable?: boolean
 }
 
-export const DEFAULT_HIGHLIGHT_COLORS: HighlightColor[] = [
+export const DEFAULT_HIGHLIGHT_COLORS: ColorHighlightPopoverColor[] = [
   {
     label: "Green",
-    value: "var(--tt-highlight-green)",
-    border: "var(--tt-highlight-green-contrast)",
+    value: "var(--tt-color-highlight-green)",
+    border: "var(--tt-color-highlight-green-contrast)",
   },
   {
     label: "Blue",
-    value: "var(--tt-highlight-blue)",
-    border: "var(--tt-highlight-blue-contrast)",
+    value: "var(--tt-color-highlight-blue)",
+    border: "var(--tt-color-highlight-blue-contrast)",
   },
   {
     label: "Red",
-    value: "var(--tt-highlight-red)",
-    border: "var(--tt-highlight-red-contrast)",
+    value: "var(--tt-color-highlight-red)",
+    border: "var(--tt-color-highlight-red-contrast)",
   },
   {
     label: "Purple",
-    value: "var(--tt-highlight-purple)",
-    border: "var(--tt-highlight-purple-contrast)",
+    value: "var(--tt-color-highlight-purple)",
+    border: "var(--tt-color-highlight-purple-contrast)",
   },
   {
     label: "Yellow",
-    value: "var(--tt-highlight-yellow)",
-    border: "var(--tt-highlight-yellow-contrast)",
+    value: "var(--tt-color-highlight-yellow)",
+    border: "var(--tt-color-highlight-yellow-contrast)",
   },
 ]
 
-export const HighlighterButton = React.forwardRef<
+export const ColorHighlightPopoverButton = React.forwardRef<
   HTMLButtonElement,
   ButtonProps
 >(({ className, children, ...props }, ref) => (
@@ -100,13 +100,13 @@ export const HighlighterButton = React.forwardRef<
   </Button>
 ))
 
-HighlighterButton.displayName = "HighlighterButton"
+ColorHighlightPopoverButton.displayName = "ColorHighlightPopoverButton"
 
-export function HighlightContent({
+export function ColorHighlightPopoverContent({
   editor: providedEditor,
   colors = DEFAULT_HIGHLIGHT_COLORS,
   onClose,
-}: HighlightContentProps) {
+}: ColorHighlightPopoverContentProps) {
   const editor = useTiptapEditor(providedEditor)
   const containerRef = React.useRef<HTMLDivElement>(null)
 
@@ -136,10 +136,14 @@ export function HighlightContent({
   })
 
   return (
-    <div ref={containerRef} className="tiptap-highlight-content" tabIndex={0}>
+    <div
+      ref={containerRef}
+      className="tiptap-color-highlight-content"
+      tabIndex={0}
+    >
       <div className="tiptap-button-group" data-orientation="horizontal">
         {colors.map((color, index) => (
-          <HighlightButton
+          <ColorHighlightButton
             key={color.value}
             editor={editor}
             color={color.value}
@@ -170,12 +174,12 @@ export function HighlightContent({
   )
 }
 
-export function HighlightPopover({
+export function ColorHighlightPopover({
   editor: providedEditor,
   colors = DEFAULT_HIGHLIGHT_COLORS,
   hideWhenUnavailable = false,
   ...props
-}: HighlightPopoverProps) {
+}: ColorHighlightPopoverProps) {
   const editor = useTiptapEditor(providedEditor)
   const [isOpen, setIsOpen] = React.useState(false)
   const [isDisabled, setIsDisabled] = React.useState(false)
@@ -230,7 +234,7 @@ export function HighlightPopover({
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <HighlighterButton
+        <ColorHighlightPopoverButton
           disabled={isDisabled}
           data-active-state={isActive ? "on" : "off"}
           data-disabled={isDisabled}
@@ -240,7 +244,7 @@ export function HighlightPopover({
       </PopoverTrigger>
 
       <PopoverContent aria-label="Highlight colors">
-        <HighlightContent
+        <ColorHighlightPopoverContent
           editor={editor}
           colors={colors}
           onClose={() => setIsOpen(false)}
@@ -250,4 +254,4 @@ export function HighlightPopover({
   )
 }
 
-export default HighlightPopover
+export default ColorHighlightPopover

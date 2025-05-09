@@ -22,7 +22,9 @@ type PopoverContextValue = ReturnType<typeof usePopover> & {
   setDescriptionId: (id: string | undefined) => void
   updatePosition: (
     side: "top" | "right" | "bottom" | "left",
-    align: "start" | "center" | "end"
+    align: "start" | "center" | "end",
+    sideOffset?: number,
+    alignOffset?: number
   ) => void
 }
 
@@ -33,6 +35,8 @@ interface PopoverOptions {
   onOpenChange?: (open: boolean) => void
   side?: "top" | "right" | "bottom" | "left"
   align?: "start" | "center" | "end"
+  sideOffset?: number
+  alignOffset?: number
 }
 
 interface PopoverProps extends PopoverOptions {
@@ -56,6 +60,8 @@ function usePopover({
   onOpenChange: setControlledOpen,
   side = "bottom",
   align = "center",
+  sideOffset = 4,
+  alignOffset = 0,
 }: PopoverOptions = {}) {
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(initialOpen)
   const [labelId, setLabelId] = React.useState<string>()
@@ -63,22 +69,26 @@ function usePopover({
   const [currentPlacement, setCurrentPlacement] = React.useState<Placement>(
     `${side}-${align}` as Placement
   )
+  const [offsets, setOffsets] = React.useState({ sideOffset, alignOffset })
 
   const open = controlledOpen ?? uncontrolledOpen
   const setOpen = setControlledOpen ?? setUncontrolledOpen
 
   const middleware = React.useMemo(
     () => [
-      offset(4),
+      offset({
+        mainAxis: offsets.sideOffset,
+        crossAxis: offsets.alignOffset,
+      }),
       flip({
         fallbackAxisSideDirection: "end",
         crossAxis: false,
       }),
       shift({
-        limiter: limitShift({ offset: 4 }),
+        limiter: limitShift({ offset: offsets.sideOffset }),
       }),
     ],
-    []
+    [offsets.sideOffset, offsets.alignOffset]
   )
 
   const floating = useFloating({
@@ -98,11 +108,19 @@ function usePopover({
   const updatePosition = React.useCallback(
     (
       newSide: "top" | "right" | "bottom" | "left",
-      newAlign: "start" | "center" | "end"
+      newAlign: "start" | "center" | "end",
+      newSideOffset?: number,
+      newAlignOffset?: number
     ) => {
       setCurrentPlacement(`${newSide}-${newAlign}` as Placement)
+      if (newSideOffset !== undefined || newAlignOffset !== undefined) {
+        setOffsets({
+          sideOffset: newSideOffset ?? offsets.sideOffset,
+          alignOffset: newAlignOffset ?? offsets.alignOffset,
+        })
+      }
     },
-    []
+    [offsets.sideOffset, offsets.alignOffset]
   )
 
   return React.useMemo(
@@ -181,8 +199,11 @@ const PopoverTrigger = React.forwardRef<HTMLElement, TriggerElementProps>(
 interface PopoverContentProps extends React.HTMLProps<HTMLDivElement> {
   side?: "top" | "right" | "bottom" | "left"
   align?: "start" | "center" | "end"
+  sideOffset?: number
+  alignOffset?: number
   portal?: boolean
   portalProps?: Omit<React.ComponentProps<typeof FloatingPortal>, "children">
+  asChild?: boolean
 }
 
 const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentProps>(
@@ -191,50 +212,69 @@ const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentProps>(
       className,
       side = "bottom",
       align = "center",
+      sideOffset,
+      alignOffset,
       style,
       portal = true,
       portalProps = {},
+      asChild = false,
+      children,
       ...props
     },
     propRef
   ) {
     const context = usePopoverContext()
-    const ref = useMergeRefs([context.refs.setFloating, propRef])
+    const childrenRef = React.isValidElement(children)
+      ? parseInt(React.version, 10) >= 19
+        ? (children.props as any).ref
+        : (children as any).ref
+      : undefined
+    const ref = useMergeRefs([context.refs.setFloating, propRef, childrenRef])
 
     React.useEffect(() => {
-      context.updatePosition(side, align)
-    }, [context, side, align])
+      context.updatePosition(side, align, sideOffset, alignOffset)
+    }, [context, side, align, sideOffset, alignOffset])
 
     if (!context.context.open) return null
 
-    const content = (
+    const contentProps = {
+      ref,
+      style: {
+        position: context.strategy,
+        top: context.y ?? 0,
+        left: context.x ?? 0,
+        ...style,
+      },
+      "aria-labelledby": context.labelId,
+      "aria-describedby": context.descriptionId,
+      className: `tiptap-popover ${className || ""}`,
+      "data-side": side,
+      "data-align": align,
+      "data-state": context.context.open ? "open" : "closed",
+      ...context.getFloatingProps(props),
+    }
+
+    const content =
+      asChild && React.isValidElement(children) ? (
+        React.cloneElement(children, {
+          ...contentProps,
+          ...(children.props as any),
+        })
+      ) : (
+        <div {...contentProps}>{children}</div>
+      )
+
+    const wrappedContent = (
       <FloatingFocusManager context={context.context} modal={context.modal}>
-        <div
-          ref={ref}
-          style={{
-            position: context.strategy,
-            top: context.y ?? 0,
-            left: context.x ?? 0,
-            ...style,
-          }}
-          aria-labelledby={context.labelId}
-          aria-describedby={context.descriptionId}
-          className={`tiptap-popover ${className || ""}`}
-          data-side={side}
-          data-align={align}
-          data-state={context.context.open ? "open" : "closed"}
-          {...context.getFloatingProps(props)}
-        >
-          {props.children}
-        </div>
+        {content}
       </FloatingFocusManager>
     )
 
     if (portal) {
-      return <FloatingPortal {...portalProps}>{content}</FloatingPortal>
+      return <FloatingPortal {...portalProps}>{wrappedContent}</FloatingPortal>
     }
 
-    return content
+    return wrappedContent
   }
 )
 

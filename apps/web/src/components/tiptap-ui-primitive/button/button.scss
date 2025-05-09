@@ -23,7 +23,8 @@
     outline: none;
   }
 
-  &[data-highlighted="true"] {
+  &[data-highlighted="true"],
+  &[data-focus-visible="true"] {
     background-color: var(--tt-button-hover-bg-color);
     color: var(--tt-button-hover-text-color);
     // outline: 2px solid var(--tt-button-active-icon-color);

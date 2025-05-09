@@ -5,7 +5,6 @@ import { isNodeSelection, type Editor } from "@tiptap/react"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Icons ---
-import { BlockQuoteIcon } from "@/components/tiptap-icons/block-quote-icon"
 import { CodeBlockIcon } from "@/components/tiptap-icons/code-block-icon"
 
 // --- Lib ---
@@ -15,17 +14,11 @@ import { isNodeInSchema } from "@/lib/tiptap-utils"
 import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
 import { Button } from "@/components/tiptap-ui-primitive/button"
 
-export type NodeType = "codeBlock" | "blockquote"
-
-export interface NodeButtonProps extends Omit<ButtonProps, "type"> {
+export interface CodeBlockButtonProps extends Omit<ButtonProps, "type"> {
   /**
    * The TipTap editor instance.
    */
   editor?: Editor | null
-  /**
-   * The type of node to toggle.
-   */
-  type: NodeType
   /**
    * Optional text to display alongside the icon.
    */
@@ -37,49 +30,27 @@ export interface NodeButtonProps extends Omit<ButtonProps, "type"> {
   hideWhenUnavailable?: boolean
 }
 
-export const nodeIcons = {
-  codeBlock: CodeBlockIcon,
-  blockquote: BlockQuoteIcon,
-}
-
-export const nodeShortcutKeys: Partial<Record<NodeType, string>> = {
-  codeBlock: "Ctrl-Alt-c",
-  blockquote: "Ctrl-Shift-b",
-}
-
-export const nodeLabels: Record<NodeType, string> = {
-  codeBlock: "Code Block",
-  blockquote: "Blockquote",
-}
-
-export function canToggleNode(editor: Editor | null, type: NodeType): boolean {
+export function canToggleCodeBlock(editor: Editor | null): boolean {
   if (!editor) return false
 
   try {
-    return type === "codeBlock"
-      ? editor.can().toggleNode("codeBlock", "paragraph")
-      : editor.can().toggleWrap("blockquote")
+    return editor.can().toggleNode("codeBlock", "paragraph")
   } catch {
     return false
   }
 }
 
-export function isNodeActive(editor: Editor | null, type: NodeType): boolean {
+export function isCodeBlockActive(editor: Editor | null): boolean {
   if (!editor) return false
-  return editor.isActive(type)
+  return editor.isActive("codeBlock")
 }
 
-export function toggleNode(editor: Editor | null, type: NodeType): boolean {
+export function toggleCodeBlock(editor: Editor | null): boolean {
   if (!editor) return false
-
-  if (type === "codeBlock") {
-    return editor.chain().focus().toggleNode("codeBlock", "paragraph").run()
-  } else {
-    return editor.chain().focus().toggleWrap("blockquote").run()
-  }
+  return editor.chain().focus().toggleNode("codeBlock", "paragraph").run()
 }
 
-export function isNodeButtonDisabled(
+export function isCodeBlockButtonDisabled(
   editor: Editor | null,
   canToggle: boolean,
   userDisabled: boolean = false
@@ -90,9 +61,8 @@ export function isNodeButtonDisabled(
   return false
 }
 
-export function shouldShowNodeButton(params: {
+export function shouldShowCodeBlockButton(params: {
   editor: Editor | null
-  type: NodeType
   hideWhenUnavailable: boolean
   nodeInSchema: boolean
   canToggle: boolean
@@ -112,44 +82,37 @@ export function shouldShowNodeButton(params: {
   return Boolean(editor?.isEditable)
 }
 
-export function formatNodeName(type: NodeType): string {
-  return type.charAt(0).toUpperCase() + type.slice(1)
-}
-
-export function useNodeState(
+export function useCodeBlockState(
   editor: Editor | null,
-  type: NodeType,
   disabled: boolean = false,
   hideWhenUnavailable: boolean = false
 ) {
-  const nodeInSchema = isNodeInSchema(type, editor)
+  const nodeInSchema = isNodeInSchema("codeBlock", editor)
 
-  const canToggle = canToggleNode(editor, type)
-  const isDisabled = isNodeButtonDisabled(editor, canToggle, disabled)
-  const isActive = isNodeActive(editor, type)
+  const canToggle = canToggleCodeBlock(editor)
+  const isDisabled = isCodeBlockButtonDisabled(editor, canToggle, disabled)
+  const isActive = isCodeBlockActive(editor)
 
   const shouldShow = React.useMemo(
     () =>
-      shouldShowNodeButton({
+      shouldShowCodeBlockButton({
         editor,
-        type,
         hideWhenUnavailable,
         nodeInSchema,
         canToggle,
       }),
-    [editor, type, hideWhenUnavailable, nodeInSchema, canToggle]
+    [editor, hideWhenUnavailable, nodeInSchema, canToggle]
   )
 
   const handleToggle = React.useCallback(() => {
     if (!isDisabled && editor) {
-      return toggleNode(editor, type)
+      return toggleCodeBlock(editor)
     }
     return false
-  }, [editor, type, isDisabled])
+  }, [editor, isDisabled])
 
-  const Icon = nodeIcons[type]
-  const shortcutKey = nodeShortcutKeys[type]
-  const label = nodeLabels[type]
+  const shortcutKey = "Ctrl-Alt-c"
+  const label = "Code Block"
 
   return {
     nodeInSchema,
@@ -158,17 +121,18 @@ export function useNodeState(
     isActive,
     shouldShow,
     handleToggle,
-    Icon,
     shortcutKey,
     label,
   }
 }
 
-export const NodeButton = React.forwardRef<HTMLButtonElement, NodeButtonProps>(
+export const CodeBlockButton = React.forwardRef<
+  HTMLButtonElement,
+  CodeBlockButtonProps
+>(
   (
     {
       editor: providedEditor,
-      type,
       text,
       hideWhenUnavailable = false,
       className = "",
@@ -186,10 +150,9 @@ export const NodeButton = React.forwardRef<HTMLButtonElement, NodeButtonProps>(
       isActive,
       shouldShow,
       handleToggle,
-      Icon,
       shortcutKey,
       label,
-    } = useNodeState(editor, type, disabled, hideWhenUnavailable)
+    } = useCodeBlockState(editor, disabled, hideWhenUnavailable)
 
     const handleClick = React.useCallback(
       (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -216,7 +179,7 @@ export const NodeButton = React.forwardRef<HTMLButtonElement, NodeButtonProps>(
         data-disabled={isDisabled}
         role="button"
         tabIndex={-1}
-        aria-label={type}
+        aria-label="codeBlock"
         aria-pressed={isActive}
         tooltip={label}
         shortcutKeys={shortcutKey}
@@ -226,7 +189,7 @@ export const NodeButton = React.forwardRef<HTMLButtonElement, NodeButtonProps>(
       >
         {children || (
           <>
-            <Icon className="tiptap-button-icon" />
+            <CodeBlockIcon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
           </>
         )}
@@ -235,6 +198,6 @@ export const NodeButton = React.forwardRef<HTMLButtonElement, NodeButtonProps>(
   }
 )
 
-NodeButton.displayName = "NodeButton"
+CodeBlockButton.displayName = "CodeBlockButton"
 
-export default NodeButton
+export default CodeBlockButton
