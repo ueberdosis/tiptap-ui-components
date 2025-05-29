@@ -38,7 +38,7 @@ import "@/components/tiptap-node/paragraph-node/paragraph-node.scss"
 import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu"
 import { ImageUploadButton } from "@/components/tiptap-ui/image-upload-button"
 import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu"
-import { BlockQuoteButton } from "@/components/tiptap-ui/blockquote-button"
+import { BlockquoteButton } from "@/components/tiptap-ui/blockquote-button"
 import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button"
 import {
   ColorHighlightPopover,
@@ -98,7 +98,7 @@ const MainToolbarContent = ({
       <ToolbarGroup>
         <HeadingDropdownMenu levels={[1, 2, 3, 4]} />
         <ListDropdownMenu types={["bulletList", "orderedList", "taskList"]} />
-        <BlockQuoteButton />
+        <BlockquoteButton />
         <CodeBlockButton />
       </ToolbarGroup>
 

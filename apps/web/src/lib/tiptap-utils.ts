@@ -1,7 +1,57 @@
-import type { Attrs, Node } from "@tiptap/pm/model"
+import type { Attrs, Node as TiptapNode } from "@tiptap/pm/model"
+import { NodeSelection, TextSelection } from "@tiptap/pm/state"
 import type { Editor } from "@tiptap/react"
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+
+export const MAC_SYMBOLS: Record<string, string> = {
+  ctrl: "⌘",
+  alt: "⌥",
+  shift: "⇧",
+} as const
+
+/**
+ * Determines if the current platform is macOS
+ * @returns boolean indicating if the current platform is Mac
+ */
+export function isMac(): boolean {
+  return (
+    typeof navigator !== "undefined" &&
+    navigator.platform.toLowerCase().includes("mac")
+  )
+}
+
+/**
+ * Formats a shortcut key based on the platform (Mac or non-Mac)
+ * @param key - The key to format
+ * @param isMac - Boolean indicating if the platform is Mac
+ * @returns A properly formatted shortcut key for the current platform
+ */
+export const formatShortcutKey = (key: string, isMac: boolean) => {
+  if (isMac) {
+    const lowerKey = key.toLowerCase()
+    return MAC_SYMBOLS[lowerKey] || key.toUpperCase()
+  }
+  return key.charAt(0).toUpperCase() + key.slice(1)
+}
+
+/**
+ * Parses a shortcut key string into an array of formatted key symbols
+ * @param shortcutKeys - A string of shortcut keys
+ * @param delimiter - The delimiter to split keys by (default: "-")
+ * @returns An array of formatted shortcut key symbols
+ */
+export const parseShortcutKeys = (
+  shortcutKeys: string | undefined,
+  delimiter: string = "-"
+) => {
+  if (!shortcutKeys) return []
+
+  return shortcutKeys
+    .split(delimiter)
+    .map((key) => key.trim())
+    .map((key) => formatShortcutKey(key, isMac()))
+}
 
 /**
  * Checks if a mark exists in the editor schema
@@ -53,7 +103,7 @@ export function getActiveMarkAttrs(
 /**
  * Checks if a node is empty
  */
-export function isEmptyNode(node?: Node | null): boolean {
+export function isEmptyNode(node?: TiptapNode | null): boolean {
   return !!node && node.content.size === 0
 }
 
@@ -80,20 +130,35 @@ export function cn(
  */
 export function findNodePosition(props: {
   editor: Editor | null
-  node?: Node | null
+  node?: TiptapNode | null
   nodePos?: number | null
-}): { pos: number; node: Node } | null {
+}): { pos: number; node: TiptapNode } | null {
   const { editor, node, nodePos } = props
 
   if (!editor || !editor.state?.doc) return null
 
   // Zero is valid position
   const hasValidNode = node !== undefined && node !== null
-  const hasValidPos = nodePos !== undefined && nodePos !== null
+  const hasValidPos = nodePos !== undefined && nodePos !== null && nodePos >= 0
 
   if (!hasValidNode && !hasValidPos) {
     return null
   }
+
+  // Otherwise search for the node in the document
+  let foundPos = -1
+  let foundNode: TiptapNode | null = null
+
+  editor.state.doc.descendants((currentNode, pos) => {
+    // TODO: Needed?
+    // if (currentNode.type && currentNode.type.name === node!.type.name) {
+    if (currentNode === node) {
+      foundPos = pos
+      foundNode = currentNode
+      return false
+    }
+    return true
+  })
 
   if (hasValidPos) {
     try {
@@ -107,24 +172,61 @@ export function findNodePosition(props: {
     }
   }
 
-  // Otherwise search for the node in the document
-  let foundPos = -1
-  let foundNode: Node | null = null
-
-  editor.state.doc.descendants((currentNode, pos) => {
-    // TODO: Needed?
-    // if (currentNode.type && currentNode.type.name === node!.type.name) {
-    if (currentNode === node) {
-      foundPos = pos
-      foundNode = currentNode
-      return false
-    }
-    return true
-  })
-
   return foundPos !== -1 && foundNode !== null
     ? { pos: foundPos, node: foundNode }
     : null
+}
+
+/**
+ * Gets the currently selected DOM element in the editor
+ * @param editor The TipTap editor instance
+ * @returns The selected DOM element or null if no selection is present
+ */
+export function getSelectedDOMElement(editor: Editor): HTMLElement | null {
+  const { state, view } = editor
+  const { selection } = state
+
+  if (selection instanceof NodeSelection) {
+    return view.nodeDOM(selection.from) as HTMLElement
+  }
+
+  if (selection instanceof TextSelection) {
+    const { node } = view.domAtPos(selection.from)
+    return node.nodeType === Node.TEXT_NODE
+      ? node.parentElement
+      : (node as HTMLElement)
+  }
+
+  return null
+}
+
+/**
+ * Finds the position of a node in the editor selection
+ * @param params Object containing editor, node (optional), and nodePos (optional)
+ * @returns The position of the node in the selection or null if not found
+ */
+export function findSelectionPosition(params: {
+  editor: Editor
+  node?: TiptapNode | null
+  nodePos?: number | null
+}): number | null {
+  const { editor, node, nodePos } = params
+
+  if (nodePos != null && nodePos >= 0) return nodePos
+
+  if (node) {
+    const found = findNodePosition({ editor, node })
+    if (found) return found.pos
+  }
+
+  const { selection } = editor.state
+  if (!selection.empty) return null
+
+  const resolvedPos = selection.$anchor
+  const nodeDepth = 1
+  const selectedNode = resolvedPos.node(nodeDepth)
+
+  return selectedNode ? resolvedPos.before(nodeDepth) : null
 }
 
 /**
