@@ -1,6 +1,5 @@
 import * as React from "react"
 import { isNodeSelection, type Editor } from "@tiptap/react"
-import type { Node } from "@tiptap/pm/model"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
@@ -9,7 +8,7 @@ import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 import { BlockQuoteIcon } from "@/components/tiptap-icons/block-quote-icon"
 
 // --- Lib ---
-import { isNodeInSchema, findNodePosition } from "@/lib/tiptap-utils"
+import { isNodeInSchema } from "@/lib/tiptap-utils"
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
@@ -20,14 +19,6 @@ export interface BlockquoteButtonProps extends Omit<ButtonProps, "type"> {
    * The TipTap editor instance.
    */
   editor?: Editor | null
-  /**
-   * The node to apply blockquote transformation to
-   */
-  node?: Node | null
-  /**
-   * The position of the node in the document
-   */
-  nodePos?: number | null
   /**
    * Optional text to display alongside the icon.
    */
@@ -49,46 +40,25 @@ export function canToggleBlockquote(editor: Editor | null): boolean {
   }
 }
 
-export function isBlockquoteActive(
-  editor: Editor | null,
-  node?: Node | null
-): boolean {
+export function isBlockquoteActive(editor: Editor | null): boolean {
   if (!editor) return false
-
-  if (node !== undefined && node !== null) {
-    return false
-  }
-
   return editor.isActive("blockquote")
 }
 
-export function toggleBlockquote(
-  editor: Editor | null,
-  node?: Node | null,
-  nodePos?: number | null
-): boolean {
+export function toggleBlockquote(editor: Editor | null): boolean {
   if (!editor) return false
+  return editor.chain().focus().toggleWrap("blockquote").run()
+}
 
-  let chain = editor.chain().focus()
-
-  if (node || nodePos !== undefined) {
-    let pos: number | null = null
-
-    if (nodePos !== undefined && nodePos !== null && nodePos >= 0) {
-      pos = nodePos
-    } else if (node) {
-      const foundPos = findNodePosition({ editor, node })
-      pos = foundPos?.pos ?? null
-    }
-
-    if (pos === null) return false
-
-    chain = chain.setNodeSelection(pos)
-  }
-
-  chain = chain.clearNodes()
-
-  return chain.toggleWrap("blockquote").run()
+export function isBlockquoteButtonDisabled(
+  editor: Editor | null,
+  canToggle: boolean,
+  userDisabled: boolean = false
+): boolean {
+  if (!editor) return true
+  if (userDisabled) return true
+  if (!canToggle) return true
+  return false
 }
 
 export function shouldShowBlockquoteButton(params: {
@@ -114,42 +84,32 @@ export function shouldShowBlockquoteButton(params: {
 
 export function useBlockquoteState(
   editor: Editor | null,
-  node?: Node | null,
+  disabled: boolean = false,
   hideWhenUnavailable: boolean = false
 ) {
   const nodeInSchema = isNodeInSchema("blockquote", editor)
-  const [show, setShow] = React.useState(false)
 
   const canToggle = canToggleBlockquote(editor)
-  const isActive = isBlockquoteActive(editor, node)
+  const isDisabled = isBlockquoteButtonDisabled(editor, canToggle, disabled)
+  const isActive = isBlockquoteActive(editor)
 
-  React.useEffect(() => {
-    if (!editor) return
+  const shouldShow = React.useMemo(
+    () =>
+      shouldShowBlockquoteButton({
+        editor,
+        hideWhenUnavailable,
+        nodeInSchema,
+        canToggle,
+      }),
+    [editor, hideWhenUnavailable, nodeInSchema, canToggle]
+  )
 
-    const handleSelectionUpdate = () => {
-      if (node !== undefined && node !== null) {
-        setShow(true)
-        return
-      }
-
-      setShow(
-        shouldShowBlockquoteButton({
-          editor,
-          hideWhenUnavailable,
-          nodeInSchema,
-          canToggle,
-        })
-      )
+  const handleToggle = React.useCallback(() => {
+    if (!isDisabled && editor) {
+      return toggleBlockquote(editor)
     }
-
-    handleSelectionUpdate()
-
-    editor.on("selectionUpdate", handleSelectionUpdate)
-
-    return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
-    }
-  }, [canToggle, editor, hideWhenUnavailable, node, nodeInSchema])
+    return false
+  }, [editor, isDisabled])
 
   const shortcutKey = "Ctrl-Shift-b"
   const label = "Blockquote"
@@ -157,8 +117,10 @@ export function useBlockquoteState(
   return {
     nodeInSchema,
     canToggle,
+    isDisabled,
     isActive,
-    show,
+    shouldShow,
+    handleToggle,
     shortcutKey,
     label,
   }
@@ -171,10 +133,10 @@ export const BlockquoteButton = React.forwardRef<
   (
     {
       editor: providedEditor,
-      node,
-      nodePos,
       text,
       hideWhenUnavailable = false,
+      className = "",
+      disabled,
       onClick,
       children,
       ...buttonProps
@@ -183,35 +145,41 @@ export const BlockquoteButton = React.forwardRef<
   ) => {
     const editor = useTiptapEditor(providedEditor)
 
-    const { isActive, show, shortcutKey, label } = useBlockquoteState(
-      editor,
-      node,
-      hideWhenUnavailable
-    )
+    const {
+      isDisabled,
+      isActive,
+      shouldShow,
+      handleToggle,
+      shortcutKey,
+      label,
+    } = useBlockquoteState(editor, disabled, hideWhenUnavailable)
 
     const handleClick = React.useCallback(
       (e: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(e)
 
-        if (!e.defaultPrevented) {
-          toggleBlockquote(editor, node, nodePos)
+        if (!e.defaultPrevented && !isDisabled) {
+          handleToggle()
         }
       },
-      [editor, node, nodePos, onClick]
+      [onClick, isDisabled, handleToggle]
     )
 
-    if (!show || !editor || !editor.isEditable) {
+    if (!shouldShow || !editor || !editor.isEditable) {
       return null
     }
 
     return (
       <Button
         type="button"
+        className={className.trim()}
+        disabled={isDisabled}
         data-style="ghost"
         data-active-state={isActive ? "on" : "off"}
+        data-disabled={isDisabled}
         role="button"
         tabIndex={-1}
-        aria-label="Blockquote"
+        aria-label="blockquote"
         aria-pressed={isActive}
         tooltip={label}
         shortcutKeys={shortcutKey}

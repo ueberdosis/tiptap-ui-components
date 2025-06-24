@@ -34,7 +34,7 @@ export interface LinkHandlerProps {
 
 export interface LinkMainProps {
   url: string
-  setUrl: React.Dispatch<React.SetStateAction<string>>
+  setUrl: React.Dispatch<React.SetStateAction<string | null>>
   setLink: () => void
   removeLink: () => void
   isActive: boolean
@@ -42,7 +42,7 @@ export interface LinkMainProps {
 
 export const useLinkHandler = (props: LinkHandlerProps) => {
   const { editor, onSetLink, onLinkActive } = props
-  const [url, setUrl] = React.useState<string>("")
+  const [url, setUrl] = React.useState<string | null>(null)
 
   React.useEffect(() => {
     if (!editor) return
@@ -50,7 +50,7 @@ export const useLinkHandler = (props: LinkHandlerProps) => {
     // Get URL immediately on mount
     const { href } = editor.getAttributes("link")
 
-    if (editor.isActive("link") && !url) {
+    if (editor.isActive("link") && url === null) {
       setUrl(href || "")
       onLinkActive?.()
     }
@@ -63,7 +63,7 @@ export const useLinkHandler = (props: LinkHandlerProps) => {
       const { href } = editor.getAttributes("link")
       setUrl(href || "")
 
-      if (editor.isActive("link") && !url) {
+      if (editor.isActive("link") && url !== null) {
         onLinkActive?.()
       }
     }
@@ -77,19 +77,9 @@ export const useLinkHandler = (props: LinkHandlerProps) => {
   const setLink = React.useCallback(() => {
     if (!url || !editor) return
 
-    const { from, to } = editor.state.selection
-    const text = editor.state.doc.textBetween(from, to)
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run()
 
-    editor
-      .chain()
-      .focus()
-      .extendMarkRange("link")
-      .insertContent({
-        type: "text",
-        text: text || url,
-        marks: [{ type: "link", attrs: { href: url } }],
-      })
-      .run()
+    setUrl(null)
 
     onSetLink?.()
   }, [editor, onSetLink, url])
@@ -99,14 +89,15 @@ export const useLinkHandler = (props: LinkHandlerProps) => {
     editor
       .chain()
       .focus()
-      .unsetMark("link", { extendEmptyMarkRange: true })
+      .extendMarkRange("link")
+      .unsetLink()
       .setMeta("preventAutolink", true)
       .run()
     setUrl("")
   }, [editor])
 
   return {
-    url,
+    url: url || "",
     setUrl,
     setLink,
     removeLink,

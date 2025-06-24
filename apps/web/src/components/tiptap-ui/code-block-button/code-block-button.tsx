@@ -1,6 +1,5 @@
 import * as React from "react"
 import { isNodeSelection, type Editor } from "@tiptap/react"
-import type { Node } from "@tiptap/pm/model"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
@@ -9,7 +8,7 @@ import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 import { CodeBlockIcon } from "@/components/tiptap-icons/code-block-icon"
 
 // --- Lib ---
-import { isNodeInSchema, findNodePosition } from "@/lib/tiptap-utils"
+import { isNodeInSchema } from "@/lib/tiptap-utils"
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
@@ -20,14 +19,6 @@ export interface CodeBlockButtonProps extends Omit<ButtonProps, "type"> {
    * The TipTap editor instance.
    */
   editor?: Editor | null
-  /**
-   * The node to apply code block transformation to
-   */
-  node?: Node | null
-  /**
-   * The position of the node in the document
-   */
-  nodePos?: number | null
   /**
    * Optional text to display alongside the icon.
    */
@@ -49,50 +40,25 @@ export function canToggleCodeBlock(editor: Editor | null): boolean {
   }
 }
 
-export function isCodeBlockActive(
-  editor: Editor | null,
-  node?: Node | null
-): boolean {
+export function isCodeBlockActive(editor: Editor | null): boolean {
   if (!editor) return false
-
-  if (node !== undefined && node !== null) {
-    return false
-  }
-
   return editor.isActive("codeBlock")
 }
 
-export function toggleCodeBlock(
-  editor: Editor | null,
-  node?: Node | null,
-  nodePos?: number | null
-): boolean {
+export function toggleCodeBlock(editor: Editor | null): boolean {
   if (!editor) return false
+  return editor.chain().focus().toggleNode("codeBlock", "paragraph").run()
+}
 
-  let chain = editor.chain().focus()
-
-  if (node || nodePos !== undefined) {
-    let pos: number | null = null
-
-    if (nodePos !== undefined && nodePos !== null && nodePos >= 0) {
-      pos = nodePos
-    } else if (node) {
-      const foundPos = findNodePosition({ editor, node })
-      pos = foundPos?.pos ?? null
-    }
-
-    if (pos === null) return false
-
-    chain = chain.setNodeSelection(pos)
-  }
-
-  chain = chain.clearNodes()
-
-  if (editor.isActive("codeBlock")) {
-    return chain.setNode("paragraph").run()
-  } else {
-    return chain.toggleNode("codeBlock", "paragraph").run()
-  }
+export function isCodeBlockButtonDisabled(
+  editor: Editor | null,
+  canToggle: boolean,
+  userDisabled: boolean = false
+): boolean {
+  if (!editor) return true
+  if (userDisabled) return true
+  if (!canToggle) return true
+  return false
 }
 
 export function shouldShowCodeBlockButton(params: {
@@ -118,42 +84,32 @@ export function shouldShowCodeBlockButton(params: {
 
 export function useCodeBlockState(
   editor: Editor | null,
-  node?: Node | null,
+  disabled: boolean = false,
   hideWhenUnavailable: boolean = false
 ) {
   const nodeInSchema = isNodeInSchema("codeBlock", editor)
-  const [show, setShow] = React.useState(false)
 
   const canToggle = canToggleCodeBlock(editor)
-  const isActive = isCodeBlockActive(editor, node)
+  const isDisabled = isCodeBlockButtonDisabled(editor, canToggle, disabled)
+  const isActive = isCodeBlockActive(editor)
 
-  React.useEffect(() => {
-    if (!editor) return
+  const shouldShow = React.useMemo(
+    () =>
+      shouldShowCodeBlockButton({
+        editor,
+        hideWhenUnavailable,
+        nodeInSchema,
+        canToggle,
+      }),
+    [editor, hideWhenUnavailable, nodeInSchema, canToggle]
+  )
 
-    const handleSelectionUpdate = () => {
-      if (node !== undefined && node !== null) {
-        setShow(true)
-        return
-      }
-
-      setShow(
-        shouldShowCodeBlockButton({
-          editor,
-          hideWhenUnavailable,
-          nodeInSchema,
-          canToggle,
-        })
-      )
+  const handleToggle = React.useCallback(() => {
+    if (!isDisabled && editor) {
+      return toggleCodeBlock(editor)
     }
-
-    handleSelectionUpdate()
-
-    editor.on("selectionUpdate", handleSelectionUpdate)
-
-    return () => {
-      editor.off("selectionUpdate", handleSelectionUpdate)
-    }
-  }, [canToggle, editor, hideWhenUnavailable, node, nodeInSchema])
+    return false
+  }, [editor, isDisabled])
 
   const shortcutKey = "Ctrl-Alt-c"
   const label = "Code Block"
@@ -161,8 +117,10 @@ export function useCodeBlockState(
   return {
     nodeInSchema,
     canToggle,
+    isDisabled,
     isActive,
-    show,
+    shouldShow,
+    handleToggle,
     shortcutKey,
     label,
   }
@@ -175,10 +133,10 @@ export const CodeBlockButton = React.forwardRef<
   (
     {
       editor: providedEditor,
-      node,
-      nodePos,
       text,
       hideWhenUnavailable = false,
+      className = "",
+      disabled,
       onClick,
       children,
       ...buttonProps
@@ -187,35 +145,41 @@ export const CodeBlockButton = React.forwardRef<
   ) => {
     const editor = useTiptapEditor(providedEditor)
 
-    const { isActive, show, shortcutKey, label } = useCodeBlockState(
-      editor,
-      node,
-      hideWhenUnavailable
-    )
+    const {
+      isDisabled,
+      isActive,
+      shouldShow,
+      handleToggle,
+      shortcutKey,
+      label,
+    } = useCodeBlockState(editor, disabled, hideWhenUnavailable)
 
     const handleClick = React.useCallback(
       (e: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(e)
 
-        if (!e.defaultPrevented) {
-          toggleCodeBlock(editor, node, nodePos)
+        if (!e.defaultPrevented && !isDisabled) {
+          handleToggle()
         }
       },
-      [editor, node, nodePos, onClick]
+      [onClick, isDisabled, handleToggle]
     )
 
-    if (!show || !editor || !editor.isEditable) {
+    if (!shouldShow || !editor || !editor.isEditable) {
       return null
     }
 
     return (
       <Button
         type="button"
+        className={className.trim()}
+        disabled={isDisabled}
         data-style="ghost"
         data-active-state={isActive ? "on" : "off"}
+        data-disabled={isDisabled}
         role="button"
         tabIndex={-1}
-        aria-label="Code Block"
+        aria-label="codeBlock"
         aria-pressed={isActive}
         tooltip={label}
         shortcutKeys={shortcutKey}
