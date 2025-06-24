@@ -33,7 +33,7 @@
             {
               "type": "highlight",
               "attrs": {
-                "color": "var(--tt-highlight-yellow)"
+                "color": "var(--tt-color-highlight-yellow)"
               }
             }
           ],
@@ -209,7 +209,7 @@
             {
               "type": "highlight",
               "attrs": {
-                "color": "var(--tt-highlight-blue)"
+                "color": "var(--tt-color-highlight-blue)"
               }
             }
           ],

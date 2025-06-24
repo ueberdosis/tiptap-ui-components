@@ -43,13 +43,14 @@ The [components](https://tiptap.dev/docs/ui-components/components/overview) avai
 
 #### UI Components
 
+- Blockquote button
+- Code block button
+- Color highlight button / popover
 - Heading button / dropdown
-- Highlight popover
 - Image upload button
 - Link popover
 - List button / dropdown
 - Mark button
-- Node button
 - Text align button
 - Undo redo button
 
