@@ -11,7 +11,7 @@ import { LinkIcon } from "@/components/tiptap-icons/link-icon"
 import { TrashIcon } from "@/components/tiptap-icons/trash-icon"
 
 // --- Lib ---
-import { isMarkInSchema } from "@/lib/tiptap-utils"
+import { isMarkInSchema, sanitizeUrl } from "@/lib/tiptap-utils"
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
@@ -151,6 +151,15 @@ const LinkMain: React.FC<LinkMainProps> = ({
     }
   }
 
+  const handleOpenLink = () => {
+    if (!url) return
+
+    const safeUrl = sanitizeUrl(url, window.location.href)
+    if (safeUrl !== "#") {
+      window.open(safeUrl, "_blank", "noopener,noreferrer")
+    }
+  }
+
   return (
     <>
       <input
@@ -182,7 +191,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
       <div className="tiptap-button-group" data-orientation="horizontal">
         <Button
           type="button"
-          onClick={() => window.open(url, "_blank")}
+          onClick={handleOpenLink}
           title="Open in new window"
           disabled={!url && !isActive}
           data-style="ghost"
