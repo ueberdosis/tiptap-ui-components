@@ -1,0 +1,219 @@
+.vega-lite-node {
+  margin: 1rem 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &.selected {
+    border-color: rgb(var(--color-primary-500));
+    box-shadow: 0 0 0 1px rgb(var(--color-primary-500));
+  }
+
+  &.editing {
+    border-color: rgb(var(--color-primary-300));
+    background-color: rgb(var(--color-gray-50));
+  }
+
+  .vega-lite-editor {
+    padding: 1rem;
+    
+    .vega-lite-textarea {
+      width: 100%;
+      min-height: 300px;
+      padding: 0.75rem;
+      border: 1px solid rgb(var(--color-gray-300));
+      border-radius: 6px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      background-color: rgb(var(--color-white));
+      color: rgb(var(--color-gray-900));
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s ease;
+
+      &:focus {
+        border-color: rgb(var(--color-primary-500));
+        box-shadow: 0 0 0 1px rgb(var(--color-primary-500));
+      }
+
+      &::placeholder {
+        color: rgb(var(--color-gray-500));
+      }
+    }
+
+    .vega-lite-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .vega-lite-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      outline: none;
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgb(var(--color-primary-500) / 0.2);
+      }
+
+      &.vega-lite-btn-primary {
+        background-color: rgb(var(--color-primary-600));
+        color: rgb(var(--color-white));
+        border-color: rgb(var(--color-primary-600));
+
+        &:hover {
+          background-color: rgb(var(--color-primary-700));
+          border-color: rgb(var(--color-primary-700));
+        }
+      }
+
+      &.vega-lite-btn-secondary {
+        background-color: rgb(var(--color-white));
+        color: rgb(var(--color-gray-700));
+        border-color: rgb(var(--color-gray-300));
+
+        &:hover {
+          background-color: rgb(var(--color-gray-50));
+          border-color: rgb(var(--color-gray-400));
+        }
+      }
+    }
+
+    .vega-lite-error {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background-color: rgb(var(--color-red-50));
+      border: 1px solid rgb(var(--color-red-200));
+      border-radius: 6px;
+      color: rgb(var(--color-red-700));
+      font-size: 0.875rem;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      white-space: pre-wrap;
+    }
+  }
+
+  .vega-lite-display {
+    cursor: pointer;
+    min-height: 100px;
+    
+    &:hover {
+      background-color: rgb(var(--color-gray-50) / 0.5);
+    }
+
+    .vega-lite-chart {
+      padding: 1rem;
+      text-align: center;
+      
+      // Vega-Lite chart container
+      .vega-embed {
+        display: inline-block;
+        
+        .vega-embed-wrapper {
+          max-width: 100%;
+        }
+      }
+    }
+
+    .vega-lite-placeholder {
+      padding: 2rem;
+      text-align: center;
+      color: rgb(var(--color-gray-500));
+      border: 2px dashed rgb(var(--color-gray-300));
+      border-radius: 6px;
+      margin: 1rem;
+
+      p {
+        margin: 0 0 1rem 0;
+        font-size: 0.875rem;
+      }
+
+      .vega-lite-example {
+        display: inline-block;
+        background-color: rgb(var(--color-gray-100));
+        padding: 1rem;
+        border-radius: 4px;
+        margin: 0;
+        
+        .vega-embed {
+          .vega-embed-wrapper {
+            max-width: 100%;
+          }
+        }
+      }
+    }
+
+    .vega-lite-error {
+      padding: 1rem;
+      margin: 1rem;
+      background-color: rgb(var(--color-red-50));
+      border: 1px solid rgb(var(--color-red-200));
+      border-radius: 6px;
+      color: rgb(var(--color-red-700));
+      font-size: 0.875rem;
+      text-align: center;
+    }
+  }
+}
+
+// Dark mode styles
+[data-theme="dark"] .vega-lite-node {
+  &.editing {
+    background-color: rgb(var(--color-gray-900));
+  }
+
+  .vega-lite-editor {
+    .vega-lite-textarea {
+      background-color: rgb(var(--color-gray-800));
+      color: rgb(var(--color-gray-100));
+      border-color: rgb(var(--color-gray-600));
+
+      &::placeholder {
+        color: rgb(var(--color-gray-400));
+      }
+    }
+
+    .vega-lite-btn-secondary {
+      background-color: rgb(var(--color-gray-800));
+      color: rgb(var(--color-gray-200));
+      border-color: rgb(var(--color-gray-600));
+
+      &:hover {
+        background-color: rgb(var(--color-gray-700));
+        border-color: rgb(var(--color-gray-500));
+      }
+    }
+
+    .vega-lite-error {
+      background-color: rgb(var(--color-red-900) / 0.2);
+      border-color: rgb(var(--color-red-800));
+      color: rgb(var(--color-red-300));
+    }
+  }
+
+  .vega-lite-display {
+    &:hover {
+      background-color: rgb(var(--color-gray-800) / 0.5);
+    }
+
+    .vega-lite-placeholder {
+      border-color: rgb(var(--color-gray-600));
+      color: rgb(var(--color-gray-400));
+
+      .vega-lite-example {
+        background-color: rgb(var(--color-gray-800));
+      }
+    }
+
+    .vega-lite-error {
+      background-color: rgb(var(--color-red-900) / 0.2);
+      border-color: rgb(var(--color-red-800));
+      color: rgb(var(--color-red-300));
+    }
+  }
+}

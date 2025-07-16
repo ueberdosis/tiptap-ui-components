@@ -29,10 +29,14 @@ import {
 
 // --- Tiptap Node ---
 import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension"
+import { MermaidExtension } from "@/components/tiptap-node/mermaid-node"
+import { VegaLiteExtension } from "@/components/tiptap-node/vega-lite-node"
 import "@/components/tiptap-node/code-block-node/code-block-node.scss"
 import "@/components/tiptap-node/list-node/list-node.scss"
 import "@/components/tiptap-node/image-node/image-node.scss"
 import "@/components/tiptap-node/paragraph-node/paragraph-node.scss"
+import "@/components/tiptap-node/mermaid-node/mermaid-node.scss"
+import "@/components/tiptap-node/vega-lite-node/vega-lite-node.scss"
 
 // --- Tiptap UI ---
 import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu"
@@ -53,6 +57,8 @@ import {
 import { MarkButton } from "@/components/tiptap-ui/mark-button"
 import { TextAlignButton } from "@/components/tiptap-ui/text-align-button"
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button"
+import { MermaidButton } from "@/components/tiptap-ui/mermaid-button"
+import { VegaLiteButton } from "@/components/tiptap-ui/vega-lite-button"
 
 // --- Icons ---
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon"
@@ -100,6 +106,8 @@ const MainToolbarContent = ({
         <ListDropdownMenu types={["bulletList", "orderedList", "taskList"]} />
         <BlockquoteButton />
         <CodeBlockButton />
+        <MermaidButton />
+        <VegaLiteButton />
       </ToolbarGroup>
 
       <ToolbarSeparator />
@@ -218,6 +226,8 @@ export function SimpleEditor() {
         upload: handleImageUpload,
         onError: (error) => console.error("Upload failed:", error),
       }),
+      MermaidExtension,
+      VegaLiteExtension,
       TrailingNode,
       Link.configure({ openOnClick: false }),
     ],
