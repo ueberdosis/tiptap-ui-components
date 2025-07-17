@@ -1,0 +1,71 @@
+.code-editor {
+  border: 1px solid var(--tt-gray-light-a-200);
+  border-radius: 6px;
+  overflow: hidden;
+  font-family: "JetBrains Mono NL", monospace;
+  
+  .dark & {
+    border-color: var(--tt-gray-dark-a-200);
+  }
+
+  .cm-editor {
+    height: 100%;
+  }
+
+  .cm-focused {
+    outline: none;
+  }
+
+  .cm-scroller {
+    font-family: inherit;
+  }
+
+  .cm-content {
+    padding: 1rem;
+    min-height: 100%;
+  }
+
+  .cm-line {
+    line-height: 1.6;
+  }
+
+  // Light theme overrides
+  &:not(.dark) {
+    .cm-editor {
+      background-color: var(--tt-codeblock-bg);
+      color: var(--tt-codeblock-text);
+    }
+
+    .cm-activeLine {
+      background-color: var(--tt-gray-light-a-75);
+    }
+
+    .cm-activeLineGutter {
+      background-color: var(--tt-gray-light-a-75);
+    }
+
+    .cm-gutters {
+      background-color: var(--tt-gray-light-a-100);
+      border-right: 1px solid var(--tt-gray-light-a-200);
+    }
+
+    .cm-lineNumbers .cm-gutterElement {
+      color: var(--tt-gray-light-a-500);
+    }
+
+    .cm-cursor {
+      border-left-color: var(--tt-gray-light-a-800);
+    }
+
+    .cm-selectionBackground {
+      background-color: var(--tt-gray-light-a-200);
+    }
+  }
+
+  // Dark theme is handled by oneDark theme from CodeMirror
+  &.dark {
+    .cm-editor {
+      background-color: var(--tt-codeblock-bg);
+    }
+  }
+}

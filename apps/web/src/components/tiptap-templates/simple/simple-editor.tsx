@@ -31,7 +31,9 @@ import {
 import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension"
 import { MermaidExtension } from "@/components/tiptap-node/mermaid-node"
 import { VegaLiteExtension } from "@/components/tiptap-node/vega-lite-node"
+import { CodeMirrorBlock } from "@/components/tiptap-node/codemirror-block-node"
 import "@/components/tiptap-node/code-block-node/code-block-node.scss"
+import "@/components/tiptap-node/codemirror-block-node/codemirror-block-node.scss"
 import "@/components/tiptap-node/list-node/list-node.scss"
 import "@/components/tiptap-node/image-node/image-node.scss"
 import "@/components/tiptap-node/paragraph-node/paragraph-node.scss"
@@ -59,6 +61,7 @@ import { TextAlignButton } from "@/components/tiptap-ui/text-align-button"
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button"
 import { MermaidButton } from "@/components/tiptap-ui/mermaid-button"
 import { VegaLiteButton } from "@/components/tiptap-ui/vega-lite-button"
+import { CodeMirrorBlockButton } from "@/components/tiptap-ui/codemirror-block-button"
 
 // --- Icons ---
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon"
@@ -106,6 +109,7 @@ const MainToolbarContent = ({
         <ListDropdownMenu types={["bulletList", "orderedList", "taskList"]} />
         <BlockquoteButton />
         <CodeBlockButton />
+        <CodeMirrorBlockButton />
         <MermaidButton />
         <VegaLiteButton />
       </ToolbarGroup>
@@ -228,6 +232,7 @@ export function SimpleEditor() {
       }),
       MermaidExtension,
       VegaLiteExtension,
+      CodeMirrorBlock,
       TrailingNode,
       Link.configure({ openOnClick: false }),
     ],

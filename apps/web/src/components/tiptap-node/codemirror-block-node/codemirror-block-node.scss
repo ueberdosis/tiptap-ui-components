@@ -1,0 +1,177 @@
+.tiptap.ProseMirror {
+  .codemirror-block-wrapper {
+    position: relative;
+    margin: 1.5em 0;
+    border: 1px solid var(--tt-codeblock-border);
+    border-radius: 6px;
+    background: var(--tt-codeblock-bg);
+    overflow: hidden;
+    
+    &.selected {
+      outline: 2px solid var(--tt-primary-color, #3b82f6);
+      outline-offset: 2px;
+    }
+
+    .codemirror-block-header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      background: var(--tt-gray-light-a-50);
+      border-bottom: 1px solid var(--tt-codeblock-border);
+      
+      .dark & {
+        background: var(--tt-gray-dark-a-50);
+      }
+
+      .language-selector {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        min-height: auto;
+        height: auto;
+        border: 1px solid var(--tt-gray-light-a-200);
+        
+        .dark & {
+          border-color: var(--tt-gray-dark-a-200);
+        }
+        
+        &:hover {
+          background: var(--tt-gray-light-a-100);
+          
+          .dark & {
+            background: var(--tt-gray-dark-a-100);
+          }
+        }
+      }
+    }
+
+    .codemirror-editor {
+      font-family: "JetBrains Mono NL", "SF Mono", Monaco, "Inconsolata", "Fira Code", "Fira Mono", "Droid Sans Mono", "Source Code Pro", monospace;
+      
+      .cm-editor {
+        background: transparent;
+        border: none;
+        outline: none;
+        
+        &.cm-focused {
+          outline: none;
+        }
+      }
+
+      .cm-scroller {
+        font-family: inherit;
+        padding: 1rem;
+      }
+
+      .cm-content {
+        padding: 0;
+        min-height: 3em;
+        caret-color: var(--tt-codeblock-text);
+      }
+
+      .cm-line {
+        line-height: 1.6;
+        padding: 0;
+      }
+
+      // Light theme customizations
+      .cm-editor:not(.cm-dark) {
+        color: var(--tt-codeblock-text);
+        
+        .cm-activeLine {
+          background-color: var(--tt-gray-light-a-75);
+        }
+
+        .cm-activeLineGutter {
+          background-color: var(--tt-gray-light-a-75);
+        }
+
+        .cm-gutters {
+          background-color: var(--tt-gray-light-a-100);
+          border-right: 1px solid var(--tt-codeblock-border);
+          color: var(--tt-gray-light-a-500);
+        }
+
+        .cm-lineNumbers .cm-gutterElement {
+          color: var(--tt-gray-light-a-500);
+        }
+
+        .cm-cursor {
+          border-left-color: var(--tt-codeblock-text);
+        }
+
+        .cm-selectionBackground {
+          background-color: var(--tt-gray-light-a-200);
+        }
+
+        .cm-focused .cm-selectionBackground {
+          background-color: var(--tt-primary-color-alpha, rgba(59, 130, 246, 0.2));
+        }
+
+        .cm-searchMatch {
+          background-color: var(--tt-yellow-light-a-200);
+          outline: 1px solid var(--tt-yellow-light-a-400);
+        }
+
+        .cm-searchMatch.cm-searchMatch-selected {
+          background-color: var(--tt-yellow-light-a-300);
+        }
+      }
+
+      // Syntax highlighting adjustments for light theme
+      .cm-editor:not(.cm-dark) {
+        .tok-comment { color: var(--tt-gray-light-a-500); font-style: italic; }
+        .tok-keyword { color: var(--tt-purple-light-a-600); font-weight: 600; }
+        .tok-string { color: var(--tt-green-light-a-600); }
+        .tok-number { color: var(--tt-blue-light-a-600); }
+        .tok-operator { color: var(--tt-gray-light-a-700); }
+        .tok-punctuation { color: var(--tt-gray-light-a-600); }
+        .tok-variableName { color: var(--tt-red-light-a-600); }
+        .tok-function { color: var(--tt-blue-light-a-700); }
+        .tok-className { color: var(--tt-orange-light-a-600); }
+        .tok-propertyName { color: var(--tt-cyan-light-a-600); }
+      }
+
+      // Dark theme handled by oneDark extension but ensure it integrates well
+      .cm-editor.cm-dark {
+        .cm-gutters {
+          border-right: 1px solid var(--tt-codeblock-border);
+        }
+      }
+
+      // Focus styles
+      .cm-editor.cm-focused {
+        box-shadow: 0 0 0 2px var(--tt-primary-color-alpha, rgba(59, 130, 246, 0.2));
+      }
+    }
+  }
+
+  // Integration with existing Tiptap styles
+  .codemirror-block-wrapper {
+    // Ensure proper spacing with other elements
+    + .codemirror-block-wrapper {
+      margin-top: 1rem;
+    }
+
+    + p,
+    + h1, + h2, + h3, + h4, + h5, + h6,
+    + ul, + ol,
+    + blockquote {
+      margin-top: 1.5em;
+    }
+
+    p + &,
+    h1 + &, h2 + &, h3 + &, h4 + &, h5 + &, h6 + &,
+    ul + &, ol + &,
+    blockquote + & {
+      margin-top: 1.5em;
+    }
+  }
+}
+
+// Dropdown menu styles for language selector
+.tiptap-dropdown-menu {
+  .codemirror-block-wrapper & {
+    min-width: 120px;
+  }
+}

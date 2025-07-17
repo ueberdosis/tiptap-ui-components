@@ -1,0 +1,34 @@
+.code-editor-popover {
+  width: 600px;
+  max-width: 90vw;
+  padding: 1rem;
+  
+  .code-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    
+    h4 {
+      margin: 0;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--tt-gray-light-a-900);
+      
+      .dark & {
+        color: var(--tt-gray-dark-a-900);
+      }
+    }
+  }
+  
+  .code-editor-popover-editor {
+    margin-bottom: 1rem;
+    min-height: 200px;
+  }
+  
+  .code-editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+}
