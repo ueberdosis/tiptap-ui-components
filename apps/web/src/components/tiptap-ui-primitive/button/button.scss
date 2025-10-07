@@ -30,6 +30,13 @@
     // outline: 2px solid var(--tt-button-active-icon-color);
   }
 
+  &[data-weight="small"] {
+    width: 1.5rem;
+    min-width: 1.5rem;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
   /* button size large */
   &[data-size="large"] {
     font-size: 0.9375rem;
@@ -68,7 +75,6 @@
   .tiptap-button-icon-sub,
   .tiptap-button-dropdown-arrows,
   .tiptap-button-dropdown-small {
-    pointer-events: none;
     flex-shrink: 0;
   }
 
@@ -203,8 +209,9 @@
   }
 
   /* hover state of a button */
-  &:hover,
-  &[data-active-item="true"]:not([disabled]) {
+  &:hover:not([data-active-item="true"]):not([disabled]),
+  &[data-active-item="true"]:not([disabled]),
+  &[data-highlighted]:not([disabled]):not([data-highlighted="false"]) {
     background-color: var(--tt-button-hover-bg-color);
     color: var(--tt-button-hover-text-color);
 

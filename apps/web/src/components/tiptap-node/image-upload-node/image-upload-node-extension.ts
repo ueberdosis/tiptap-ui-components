@@ -1,6 +1,7 @@
 import { mergeAttributes, Node } from "@tiptap/react"
 import { ReactNodeViewRenderer } from "@tiptap/react"
 import { ImageUploadNode as ImageUploadNodeComponent } from "@/components/tiptap-node/image-upload-node/image-upload-node"
+import type { NodeType } from "@tiptap/pm/model"
 
 export type UploadFunction = (
   file: File,
@@ -9,6 +10,11 @@ export type UploadFunction = (
 ) => Promise<string>
 
 export interface ImageUploadNodeOptions {
+  /**
+   * The type of the node.
+   * @default 'image'
+   */
+  type?: string | NodeType | undefined
   /**
    * Acceptable file types for upload.
    * @default 'image/*'
@@ -36,6 +42,13 @@ export interface ImageUploadNodeOptions {
    * Callback for successful uploads.
    */
   onSuccess?: (url: string) => void
+  /**
+   * HTML attributes to add to the image element.
+   * @default {}
+   * @example { class: 'foo' }
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  HTMLAttributes: Record<string, any>
 }
 
 declare module "@tiptap/react" {
@@ -47,7 +60,7 @@ declare module "@tiptap/react" {
 }
 
 /**
- * A TipTap node extension that creates an image upload component.
+ * A Tiptap node extension that creates an image upload component.
  * @see registry/tiptap-node/image-upload-node/image-upload-node
  */
 export const ImageUploadNode = Node.create<ImageUploadNodeOptions>({
@@ -63,12 +76,14 @@ export const ImageUploadNode = Node.create<ImageUploadNodeOptions>({
 
   addOptions() {
     return {
+      type: "image",
       accept: "image/*",
       limit: 1,
       maxSize: 0,
       upload: undefined,
       onError: undefined,
       onSuccess: undefined,
+      HTMLAttributes: {},
     }
   },
 
@@ -104,7 +119,7 @@ export const ImageUploadNode = Node.create<ImageUploadNodeOptions>({
   addCommands() {
     return {
       setImageUploadNode:
-        (options = {}) =>
+        (options) =>
         ({ commands }) => {
           return commands.insertContent({
             type: this.name,

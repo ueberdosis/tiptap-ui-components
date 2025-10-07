@@ -1,156 +1,51 @@
+"use client"
+
 import * as React from "react"
-import { isNodeSelection, type Editor } from "@tiptap/react"
+
+// --- Lib ---
+import { parseShortcutKeys } from "@/lib/tiptap-utils"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
-// --- Icons ---
-import { BoldIcon } from "@/components/tiptap-icons/bold-icon"
-import { Code2Icon } from "@/components/tiptap-icons/code2-icon"
-import { ItalicIcon } from "@/components/tiptap-icons/italic-icon"
-import { StrikeIcon } from "@/components/tiptap-icons/strike-icon"
-import { SubscriptIcon } from "@/components/tiptap-icons/subscript-icon"
-import { SuperscriptIcon } from "@/components/tiptap-icons/superscript-icon"
-import { UnderlineIcon } from "@/components/tiptap-icons/underline-icon"
-
-// --- Lib ---
-import { isMarkInSchema } from "@/lib/tiptap-utils"
+// --- Tiptap UI ---
+import type { Mark, UseMarkConfig } from "@/components/tiptap-ui/mark-button"
+import { MARK_SHORTCUT_KEYS, useMark } from "@/components/tiptap-ui/mark-button"
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
 import { Button } from "@/components/tiptap-ui-primitive/button"
+import { Badge } from "@/components/tiptap-ui-primitive/badge"
 
-export type Mark =
-  | "bold"
-  | "italic"
-  | "strike"
-  | "code"
-  | "underline"
-  | "superscript"
-  | "subscript"
-
-export interface MarkButtonProps extends Omit<ButtonProps, "type"> {
+export interface MarkButtonProps
+  extends Omit<ButtonProps, "type">,
+    UseMarkConfig {
   /**
-   * The type of mark to toggle
-   */
-  type: Mark
-  /**
-   * Optional editor instance. If not provided, will use editor from context
-   */
-  editor?: Editor | null
-  /**
-   * Display text for the button (optional)
+   * Optional text to display alongside the icon.
    */
   text?: string
   /**
-   * Whether this button should be hidden when the mark is not available
+   * Optional show shortcut keys in the button.
+   * @default false
    */
-  hideWhenUnavailable?: boolean
+  showShortcut?: boolean
 }
 
-export const markIcons = {
-  bold: BoldIcon,
-  italic: ItalicIcon,
-  underline: UnderlineIcon,
-  strike: StrikeIcon,
-  code: Code2Icon,
-  superscript: SuperscriptIcon,
-  subscript: SubscriptIcon,
-}
-
-export const markShortcutKeys: Partial<Record<Mark, string>> = {
-  bold: "Ctrl-b",
-  italic: "Ctrl-i",
-  underline: "Ctrl-u",
-  strike: "Ctrl-Shift-s",
-  code: "Ctrl-e",
-  superscript: "Ctrl-.",
-  subscript: "Ctrl-,",
-}
-
-export function canToggleMark(editor: Editor | null, type: Mark): boolean {
-  if (!editor) return false
-
-  try {
-    return editor.can().toggleMark(type)
-  } catch {
-    return false
-  }
-}
-
-export function isMarkActive(editor: Editor | null, type: Mark): boolean {
-  if (!editor) return false
-  return editor.isActive(type)
-}
-
-export function toggleMark(editor: Editor | null, type: Mark): void {
-  if (!editor) return
-  editor.chain().focus().toggleMark(type).run()
-}
-
-export function isMarkButtonDisabled(
-  editor: Editor | null,
-  type: Mark,
-  userDisabled: boolean = false
-): boolean {
-  if (!editor) return true
-  if (userDisabled) return true
-  if (editor.isActive("codeBlock")) return true
-  if (!canToggleMark(editor, type)) return true
-  return false
-}
-
-export function shouldShowMarkButton(params: {
-  editor: Editor | null
+export function MarkShortcutBadge({
+  type,
+  shortcutKeys = MARK_SHORTCUT_KEYS[type],
+}: {
   type: Mark
-  hideWhenUnavailable: boolean
-  markInSchema: boolean
-}): boolean {
-  const { editor, type, hideWhenUnavailable, markInSchema } = params
-
-  if (!markInSchema || !editor) {
-    return false
-  }
-
-  if (hideWhenUnavailable) {
-    if (
-      isNodeSelection(editor.state.selection) ||
-      !canToggleMark(editor, type)
-    ) {
-      return false
-    }
-  }
-
-  return true
+  shortcutKeys?: string
+}) {
+  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
-export function getFormattedMarkName(type: Mark): string {
-  return type.charAt(0).toUpperCase() + type.slice(1)
-}
-
-export function useMarkState(
-  editor: Editor | null,
-  type: Mark,
-  disabled: boolean = false
-) {
-  const markInSchema = isMarkInSchema(type, editor)
-  const isDisabled = isMarkButtonDisabled(editor, type, disabled)
-  const isActive = isMarkActive(editor, type)
-
-  const Icon = markIcons[type]
-  const shortcutKey = markShortcutKeys[type]
-  const formattedName = getFormattedMarkName(type)
-
-  return {
-    markInSchema,
-    isDisabled,
-    isActive,
-    Icon,
-    shortcutKey,
-    formattedName,
-  }
-}
-
+/**
+ * Button component for toggling marks in a Tiptap editor.
+ *
+ * For custom button implementations, use the `useMark` hook instead.
+ */
 export const MarkButton = React.forwardRef<HTMLButtonElement, MarkButtonProps>(
   (
     {
@@ -158,71 +53,66 @@ export const MarkButton = React.forwardRef<HTMLButtonElement, MarkButtonProps>(
       type,
       text,
       hideWhenUnavailable = false,
-      className = "",
-      disabled,
+      onToggled,
+      showShortcut = false,
       onClick,
       children,
       ...buttonProps
     },
     ref
   ) => {
-    const editor = useTiptapEditor(providedEditor)
-
+    const { editor } = useTiptapEditor(providedEditor)
     const {
-      markInSchema,
-      isDisabled,
+      isVisible,
+      handleMark,
+      label,
+      canToggle,
       isActive,
       Icon,
-      shortcutKey,
-      formattedName,
-    } = useMarkState(editor, type, disabled)
+      shortcutKeys,
+    } = useMark({
+      editor,
+      type,
+      hideWhenUnavailable,
+      onToggled,
+    })
 
     const handleClick = React.useCallback(
-      (e: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(e)
-
-        if (!e.defaultPrevented && !isDisabled && editor) {
-          toggleMark(editor, type)
-        }
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        onClick?.(event)
+        if (event.defaultPrevented) return
+        handleMark()
       },
-      [onClick, isDisabled, editor, type]
+      [handleMark, onClick]
     )
 
-    const show = React.useMemo(() => {
-      return shouldShowMarkButton({
-        editor,
-        type,
-        hideWhenUnavailable,
-        markInSchema,
-      })
-    }, [editor, type, hideWhenUnavailable, markInSchema])
-
-    if (!show || !editor || !editor.isEditable) {
+    if (!isVisible) {
       return null
     }
 
     return (
       <Button
         type="button"
-        className={className.trim()}
-        disabled={isDisabled}
+        disabled={!canToggle}
         data-style="ghost"
         data-active-state={isActive ? "on" : "off"}
-        data-disabled={isDisabled}
+        data-disabled={!canToggle}
         role="button"
         tabIndex={-1}
-        aria-label={type}
+        aria-label={label}
         aria-pressed={isActive}
-        tooltip={formattedName}
-        shortcutKeys={shortcutKey}
+        tooltip={label}
         onClick={handleClick}
         {...buttonProps}
         ref={ref}
       >
-        {children || (
+        {children ?? (
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
+            {showShortcut && (
+              <MarkShortcutBadge type={type} shortcutKeys={shortcutKeys} />
+            )}
           </>
         )}
       </Button>
@@ -231,5 +121,3 @@ export const MarkButton = React.forwardRef<HTMLButtonElement, MarkButtonProps>(
 )
 
 MarkButton.displayName = "MarkButton"
-
-export default MarkButton

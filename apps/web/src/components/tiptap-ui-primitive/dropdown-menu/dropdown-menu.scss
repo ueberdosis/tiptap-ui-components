@@ -1,52 +1,26 @@
 .tiptap-dropdown-menu {
-  --tt-popover-bg-color: var(--white);
-  --tt-popover-border-color: var(--tt-gray-light-a-100);
-  --tt-popover-text-color: var(--tt-gray-light-a-600);
-  --tt-popover-label: var(--tt-gray-light-a-400);
+  --tt-dropdown-menu-bg-color: var(--white);
+  --tt-dropdown-menu-border-color: var(--tt-gray-light-a-100);
+  --tt-dropdown-menu-text-color: var(--tt-gray-light-a-600);
 
   .dark & {
-    --tt-popover-border-color: var(--tt-gray-dark-a-50);
-    --tt-popover-bg-color: var(--tt-gray-dark-50);
-    --tt-popover-text-color: var(--tt-gray-dark-a-600);
-    --tt-popover-label: var(--tt-gray-dark-a-400);
+    --tt-dropdown-menu-border-color: var(--tt-gray-dark-a-50);
+    --tt-dropdown-menu-bg-color: var(--tt-gray-dark-50);
+    --tt-dropdown-menu-text-color: var(--tt-gray-dark-a-600);
   }
 }
 
 /* --------------------------------------------
-      --------- POPOVER STYLING SETTINGS -----------
-      -------------------------------------------- */
+    --------- DROPDOWN MENU STYLING SETTINGS -----------
+    -------------------------------------------- */
 .tiptap-dropdown-menu {
-  --padding: 0.25rem;
-  --border-width: 1px;
-
-  z-index: 200;
-  border-radius: calc(
-    var(--padding) + var(--tt-radius-lg) + var(--border-width)
-  );
-  border: var(--border-width) solid var(--tt-popover-border-color);
-  background-color: var(--tt-popover-bg-color);
-  padding: var(--padding);
-  color: var(--tt-popover-text-color);
-  box-shadow: var(--tt-shadow-elevated-md);
+  z-index: 50;
   outline: none;
-  overflow: auto;
-  gap: 0.25rem;
+  transform-origin: var(--radix-dropdown-menu-content-transform-origin);
+  max-height: var(--radix-dropdown-menu-content-available-height);
 
-  button {
-    width: 100%;
-  }
-
-  .tiptap-dropdown-menu-separator {
-    margin: 0.25rem 0;
-  }
-
-  .tiptap-dropdown-menu-label {
-    margin-left: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    color: var(--tt-popover-label);
+  > * {
+    max-height: var(--radix-dropdown-menu-content-available-height);
   }
 
   /* Animation states */

@@ -1,62 +1,50 @@
 import * as React from "react"
-import { type Editor } from "@tiptap/react"
+
+// --- Lib ---
+import { parseShortcutKeys } from "@/lib/tiptap-utils"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
-// --- Icons ---
-import { ImagePlusIcon } from "@/components/tiptap-icons/image-plus-icon"
+// --- Tiptap UI ---
+import type { UseImageUploadConfig } from "@/components/tiptap-ui/image-upload-button"
+import {
+  IMAGE_UPLOAD_SHORTCUT_KEY,
+  useImageUpload,
+} from "@/components/tiptap-ui/image-upload-button"
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
 import { Button } from "@/components/tiptap-ui-primitive/button"
+import { Badge } from "@/components/tiptap-ui-primitive/badge"
 
-export interface ImageUploadButtonProps extends ButtonProps {
-  editor?: Editor | null
+export interface ImageUploadButtonProps
+  extends Omit<ButtonProps, "type">,
+    UseImageUploadConfig {
+  /**
+   * Optional text to display alongside the icon.
+   */
   text?: string
-  extensionName?: string
+  /**
+   * Optional show shortcut keys in the button.
+   * @default false
+   */
+  showShortcut?: boolean
 }
 
-export function isImageActive(
-  editor: Editor | null,
-  extensionName: string
-): boolean {
-  if (!editor) return false
-  return editor.isActive(extensionName)
+export function ImageShortcutBadge({
+  shortcutKeys = IMAGE_UPLOAD_SHORTCUT_KEY,
+}: {
+  shortcutKeys?: string
+}) {
+  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
-export function insertImage(
-  editor: Editor | null,
-  extensionName: string
-): boolean {
-  if (!editor) return false
-
-  return editor
-    .chain()
-    .focus()
-    .insertContent({
-      type: extensionName,
-    })
-    .run()
-}
-
-export function useImageUploadButton(
-  editor: Editor | null,
-  extensionName: string = "imageUpload",
-  disabled: boolean = false
-) {
-  const isActive = isImageActive(editor, extensionName)
-  const handleInsertImage = React.useCallback(() => {
-    if (disabled) return false
-    return insertImage(editor, extensionName)
-  }, [editor, extensionName, disabled])
-
-  return {
-    isActive,
-    handleInsertImage,
-  }
-}
-
+/**
+ * Button component for uploading/inserting images in a Tiptap editor.
+ *
+ * For custom button implementations, use the `useImage` hook instead.
+ */
 export const ImageUploadButton = React.forwardRef<
   HTMLButtonElement,
   ImageUploadButtonProps
@@ -64,57 +52,65 @@ export const ImageUploadButton = React.forwardRef<
   (
     {
       editor: providedEditor,
-      extensionName = "imageUpload",
       text,
-      className = "",
-      disabled,
+      hideWhenUnavailable = false,
+      onInserted,
+      showShortcut = false,
       onClick,
       children,
       ...buttonProps
     },
     ref
   ) => {
-    const editor = useTiptapEditor(providedEditor)
-    const { isActive, handleInsertImage } = useImageUploadButton(
+    const { editor } = useTiptapEditor(providedEditor)
+    const {
+      isVisible,
+      canInsert,
+      handleImage,
+      label,
+      isActive,
+      shortcutKeys,
+      Icon,
+    } = useImageUpload({
       editor,
-      extensionName,
-      disabled
-    )
+      hideWhenUnavailable,
+      onInserted,
+    })
 
     const handleClick = React.useCallback(
-      (e: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(e)
-
-        if (!e.defaultPrevented && !disabled) {
-          handleInsertImage()
-        }
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        onClick?.(event)
+        if (event.defaultPrevented) return
+        handleImage()
       },
-      [onClick, disabled, handleInsertImage]
+      [handleImage, onClick]
     )
 
-    if (!editor || !editor.isEditable) {
+    if (!isVisible) {
       return null
     }
 
     return (
       <Button
-        ref={ref}
         type="button"
-        className={className.trim()}
         data-style="ghost"
         data-active-state={isActive ? "on" : "off"}
         role="button"
         tabIndex={-1}
-        aria-label="Add image"
+        disabled={!canInsert}
+        data-disabled={!canInsert}
+        aria-label={label}
         aria-pressed={isActive}
-        tooltip="Add image"
+        tooltip={label}
         onClick={handleClick}
         {...buttonProps}
+        ref={ref}
       >
-        {children || (
+        {children ?? (
           <>
-            <ImagePlusIcon className="tiptap-button-icon" />
+            <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
+            {showShortcut && <ImageShortcutBadge shortcutKeys={shortcutKeys} />}
           </>
         )}
       </Button>
@@ -123,5 +119,3 @@ export const ImageUploadButton = React.forwardRef<
 )
 
 ImageUploadButton.displayName = "ImageUploadButton"
-
-export default ImageUploadButton

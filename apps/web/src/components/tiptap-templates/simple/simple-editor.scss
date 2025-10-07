@@ -16,6 +16,12 @@ body {
   font-weight: 400;
   font-style: normal;
   padding: 0;
+  overscroll-behavior-y: none;
+}
+
+html,
+body {
+  overscroll-behavior-x: none;
 }
 
 html,
@@ -26,49 +32,51 @@ body,
   background-color: var(--tt-bg-color);
 }
 
-body {
-  overflow: hidden;
+::-webkit-scrollbar {
+  width: 0.25rem;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--tt-scrollbar-color) transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--tt-scrollbar-color);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .tiptap.ProseMirror {
   font-family: "DM Sans", sans-serif;
 }
 
-.content-wrapper {
-  height: calc(100% - var(--tt-toolbar-height));
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    display: block;
-    width: 0.5rem;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--tt-scrollbar-color);
-    border-radius: 4px;
-  }
-
-  /* Firefox scrollbar */
-  scrollbar-width: thin;
-  scrollbar-color: var(--tt-scrollbar-color) transparent;
+.simple-editor-wrapper {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
 }
 
 .simple-editor-content {
-  max-width: 640px;
+  max-width: 648px;
   width: 100%;
   margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
-.simple-editor-content .tiptap.ProseMirror {
-  padding: 3rem 3rem;
+.simple-editor-content .tiptap.ProseMirror.simple-editor {
+  flex: 1;
+  padding: 3rem 3rem 30vh;
 }
 
 @media screen and (max-width: 480px) {
-  .simple-editor-content .tiptap.ProseMirror {
-    padding: 1rem 1.5rem;
+  .simple-editor-content .tiptap.ProseMirror.simple-editor {
+    padding: 1rem 1.5rem 30vh;
   }
 }
