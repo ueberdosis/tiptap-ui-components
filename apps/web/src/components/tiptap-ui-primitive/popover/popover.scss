@@ -14,30 +14,13 @@
     --------- POPOVER STYLING SETTINGS -----------
     -------------------------------------------- */
 .tiptap-popover {
-  --padding: 0.25rem;
-  --border-width: 1px;
-
   z-index: 50;
-  border-radius: calc(
-    var(--padding) + var(--tt-radius-lg) + var(--border-width)
-  );
-  border: var(--border-width) solid var(--tt-popover-border-color);
-  background-color: var(--tt-popover-bg-color);
-  padding: var(--padding);
-  color: var(--tt-popover-text-color);
-  box-shadow: var(--tt-shadow-elevated-md);
   outline: none;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
+  transform-origin: var(--radix-popover-content-transform-origin);
+  max-height: var(--radix-popover-content-available-height);
 
-  button {
-    width: 100%;
-  }
-
-  &[data-orientation="horizontal"] {
-    --padding: 0.125rem;
+  > * {
+    max-height: var(--radix-popover-content-available-height);
   }
 
   /* Animation states */

@@ -1,24 +1,28 @@
 .tiptap.ProseMirror {
-  --blockquote-bg-color: var(--tt-gray-light-900);
+  --tt-collaboration-carets-label: var(--tt-gray-light-900);
   --link-text-color: var(--tt-brand-color-500);
-  --separator-color: var(--tt-gray-light-a-200);
   --thread-text: var(--tt-gray-light-900);
   --placeholder-color: var(--tt-gray-light-a-400);
+  --thread-bg-color: var(--tt-color-yellow-inc-2);
 
-  // Mathematics variables
-  --tiptap-mathematics-bg-color: var(--tt-gray-light-a-200);
-  --tiptap-mathematics-border-color: var(--tt-brand-color-500);
+  // ai
+  --tiptap-ai-insertion-color: var(--tt-brand-color-600);
 
   .dark & {
-    --blockquote-bg-color: var(--tt-gray-dark-900);
+    --tt-collaboration-carets-label: var(--tt-gray-dark-100);
     --link-text-color: var(--tt-brand-color-400);
-    --separator-color: var(--tt-gray-dark-a-200);
     --thread-text: var(--tt-gray-dark-900);
     --placeholder-color: var(--tt-gray-dark-a-400);
+    --thread-bg-color: var(--tt-color-yellow-dec-2);
 
-    --tiptap-mathematics-bg-color: var(--tt-gray-dark-a-200);
-    --tiptap-mathematics-border-color: var(--tt-brand-color-400);
+    --tiptap-ai-insertion-color: var(--tt-brand-color-400);
   }
+}
+
+/* Ensure each top-level node has relative positioning 
+   so absolutely positioned placeholders work correctly */
+.tiptap.ProseMirror > * {
+  position: relative;
 }
 
 /* =====================
@@ -53,57 +57,20 @@
     background-color: var(--tt-selection-color);
   }
 
-  .ProseMirror-hideselection {
-    caret-color: transparent;
+  // Selected node styles
+  .ProseMirror-selectednode:not(img):not(pre):not(.react-renderer) {
+    border-radius: var(--tt-radius-md);
+    background-color: var(--tt-selection-color);
   }
 
-  // Placeholder
-  > p.is-editor-empty::before {
-    content: attr(data-placeholder);
-    pointer-events: none;
-    color: var(--placeholder-color);
-    float: left;
-    height: 0;
+  .ProseMirror-hideselection {
+    caret-color: transparent;
   }
 
   // Resize cursor
   &.resize-cursor {
     cursor: ew-resize;
     cursor: col-resize;
-  }
-}
-
-/* =====================
-     GAP CURSOR
-     ===================== */
-.tiptap.ProseMirror {
-  .ProseMirror-gapcursor {
-    display: none;
-    pointer-events: none;
-    position: absolute;
-
-    &:after {
-      content: "";
-      display: block;
-      position: absolute;
-      top: 1em;
-      width: 1.25em;
-      border-top: 1px solid black;
-      animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
-    }
-  }
-
-  &.ProseMirror-focused,
-  &.ProseMirror.ProseMirror-focused {
-    .ProseMirror-gapcursor {
-      display: block;
-    }
-  }
-}
-
-@keyframes ProseMirror-cursor-blink {
-  to {
-    visibility: hidden;
   }
 }
 
@@ -123,35 +90,9 @@
   u span {
     text-decoration: underline;
   }
-}
 
-/* =====================
-     BLOCKQUOTE
-     ===================== */
-.tiptap.ProseMirror {
-  blockquote {
-    position: relative;
-    padding-left: 1em;
-    padding-top: 0.375em;
-    padding-bottom: 0.375em;
-    margin: 1.5rem 0;
-
-    p {
-      margin-top: 0;
-    }
-
-    &::before,
-    &.is-empty::before {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      top: 0;
-      height: 100%;
-      width: 0.25em;
-      background-color: var(--blockquote-bg-color);
-      content: "";
-      border-radius: 0;
-    }
+  .tiptap-ai-insertion {
+    color: var(--tiptap-ai-insertion-color);
   }
 }
 
@@ -159,7 +100,7 @@
      COLLABORATION
      ===================== */
 .tiptap.ProseMirror {
-  .collaboration-cursor {
+  .collaboration-carets {
     &__caret {
       border-right: 1px solid transparent;
       border-left: 1px solid transparent;
@@ -171,6 +112,7 @@
     }
 
     &__label {
+      color: var(--tt-collaboration-carets-label);
       border-radius: 0.25rem;
       border-bottom-left-radius: 0;
       font-size: 0.75rem;
@@ -194,69 +136,6 @@
   width: 1.25em;
   height: 1.25em;
   cursor: text;
-}
-
-/* =====================
-     HEADINGS
-     ===================== */
-.tiptap.ProseMirror {
-  h1,
-  h2,
-  h3,
-  h4 {
-    position: relative;
-    color: inherit;
-    font-style: inherit;
-
-    &:first-child {
-      margin-top: 0;
-    }
-  }
-
-  h1 {
-    font-size: 1.5em;
-    font-weight: 700;
-    margin-top: 3em;
-  }
-
-  h2 {
-    font-size: 1.25em;
-    font-weight: 700;
-    margin-top: 2.5em;
-  }
-
-  h3 {
-    font-size: 1.125em;
-    font-weight: 600;
-    margin-top: 2em;
-  }
-
-  h4 {
-    font-size: 1em;
-    font-weight: 600;
-    margin-top: 2em;
-  }
-}
-
-/* =====================
-     HORIZONTAL RULE
-     ===================== */
-.tiptap.ProseMirror {
-  hr {
-    margin-top: 3em;
-    margin-bottom: 3em;
-    border: none;
-    height: 1px;
-    background-color: var(--separator-color);
-  }
-
-  &.ProseMirror-focused {
-    hr.ProseMirror-selectednode {
-      border-radius: 9999px;
-      outline: 3px solid var(--tt-brand-color-500);
-      outline-offset: 2px;
-    }
-  }
 }
 
 /* =====================
@@ -294,7 +173,7 @@
 
     &.tiptap-thread--selected,
     &.tiptap-thread--hovered {
-      background-color: var(--tt-color-yellow-inc-2);
+      background-color: var(--thread-bg-color);
       border-bottom-color: transparent;
     }
   }
@@ -347,44 +226,19 @@
 }
 
 /* =====================
-     Mathematics
-     ===================== */
-.tiptap.ProseMirror {
-  .Tiptap-mathematics-editor {
-    padding: 0 0.25rem;
-    margin: 0 0.25rem;
-    border: 1px solid var(--tiptap-mathematics-border-color);
-    font-family: monospace;
-    font-size: 0.875rem;
-  }
-
-  .Tiptap-mathematics-render {
-    padding: 0 0.25rem;
-
-    &--editable {
-      cursor: pointer;
-      transition: background 0.2s;
-
-      &:hover {
-        background: var(--tiptap-mathematics-bg-color);
-      }
-    }
-  }
-
-  .Tiptap-mathematics-editor,
-  .Tiptap-mathematics-render {
-    border-radius: var(--tt-radius-xs);
-    display: inline-block;
-  }
-}
-
-/* =====================
      PLACEHOLDER
      ===================== */
-.is-empty[data-placeholder]:has(
+.is-empty:not(.with-slash)[data-placeholder]:has(
+    > .ProseMirror-trailingBreak:only-child
+  )::before {
+  content: attr(data-placeholder);
+}
+
+.is-empty.with-slash[data-placeholder]:has(
     > .ProseMirror-trailingBreak:only-child
   )::before {
   content: "Write, type '/' for commands…";
+  font-style: italic;
 }
 
 .is-empty[data-placeholder]:has(
@@ -393,9 +247,26 @@
   pointer-events: none;
   height: 0;
   position: absolute;
-  font-style: italic;
+  width: 100%;
+  text-align: inherit;
+  left: 0;
+  right: 0;
 }
 
 .is-empty[data-placeholder]:has(> .ProseMirror-trailingBreak):before {
   color: var(--placeholder-color);
+}
+
+/* =====================
+     DROPCURSOR
+     ===================== */
+.prosemirror-dropcursor-block,
+.prosemirror-dropcursor-inline {
+  background: var(--tt-brand-color-400) !important;
+  border-radius: 0.25rem;
+  margin-left: -1px;
+  margin-right: -1px;
+  width: 100%;
+  height: 0.188rem;
+  cursor: grabbing;
 }

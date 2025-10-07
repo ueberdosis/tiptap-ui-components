@@ -11,8 +11,7 @@
     border-radius: var(--tt-radius-xs, 0.25rem);
   }
 
-  &.ProseMirror-focused
-    img:not([data-type="emoji"] img).ProseMirror-selectednode {
+  img:not([data-type="emoji"] img).ProseMirror-selectednode {
     outline-color: var(--tt-brand-color-500);
   }
 

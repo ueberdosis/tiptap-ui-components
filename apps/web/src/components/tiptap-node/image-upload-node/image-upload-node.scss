@@ -1,6 +1,4 @@
 :root {
-  --tt-button-default-icon-color: var(--tt-gray-light-a-600);
-
   --tiptap-image-upload-active: var(--tt-brand-color-500);
   --tiptap-image-upload-progress-bg: var(--tt-brand-color-50);
   --tiptap-image-upload-icon-bg: var(--tt-brand-color-500);
@@ -17,8 +15,6 @@
 }
 
 .dark {
-  --tt-button-default-icon-color: var(--tt-gray-dark-a-600);
-
   --tiptap-image-upload-active: var(--tt-brand-color-400);
   --tiptap-image-upload-progress-bg: var(--tt-brand-color-900);
   --tiptap-image-upload-icon-bg: var(--tt-brand-color-400);
@@ -104,6 +100,70 @@
     font-size: 0.75rem;
   }
 
+  .tiptap-image-upload-drag-area {
+    padding: 2rem 1.5rem;
+    border: 1.5px dashed var(--tiptap-image-upload-border);
+    border-radius: var(--tt-radius-md, 0.5rem);
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--tiptap-image-upload-border-hover);
+    }
+
+    &.drag-active {
+      border-color: var(--tiptap-image-upload-border-active);
+      background-color: rgba(
+        var(--tiptap-image-upload-active-rgb, 0, 123, 255),
+        0.05
+      );
+    }
+
+    &.drag-over {
+      border-color: var(--tiptap-image-upload-border-active);
+      background-color: rgba(
+        var(--tiptap-image-upload-active-rgb, 0, 123, 255),
+        0.1
+      );
+    }
+  }
+
+  .tiptap-image-upload-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.25rem;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none;
+  }
+
+  .tiptap-image-upload-previews {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .tiptap-image-upload-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--tiptap-image-upload-border);
+    margin-bottom: 0.5rem;
+
+    span {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--tiptap-image-upload-text-color);
+    }
+  }
+
+  // === Individual File Preview Styles ===
   .tiptap-image-upload-preview {
     position: relative;
     border-radius: var(--tt-radius-md, 0.5rem);
@@ -153,61 +213,37 @@
     .tiptap-image-upload-actions {
       display: flex;
       align-items: center;
+      gap: 0.5rem;
 
       .tiptap-image-upload-progress-text {
         font-size: 0.75rem;
         color: var(--tiptap-image-upload-border-active);
-      }
-
-      .tiptap-image-upload-close-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 2rem;
-        height: 2rem;
-        color: var(--tt-button-default-icon-color);
-        transition: color 200ms ease;
-
-        svg {
-          width: 1rem;
-          height: 1rem;
-        }
+        font-weight: 600;
       }
     }
-  }
-
-  .tiptap-image-upload-dragger {
-    padding: 2rem 1.5rem;
-    border: 1.5px dashed var(--tiptap-image-upload-border);
-    border-radius: var(--tt-radius-md, 0.5rem);
-    text-align: center;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-
-    &-active {
-      border-color: var(--tiptap-image-upload-border-active);
-      background-color: rgba(
-        var(--tiptap-image-upload-active-rgb, 0, 0, 255),
-        0.05
-      );
-    }
-  }
-
-  .tiptap-image-upload-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 0.25rem;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none;
   }
 }
 
 .tiptap.ProseMirror.ProseMirror-focused {
-  .ProseMirror-selectednode .tiptap-image-upload-dragger {
+  .ProseMirror-selectednode .tiptap-image-upload-drag-area {
     border-color: var(--tiptap-image-upload-active);
+  }
+}
+
+@media (max-width: 480px) {
+  .tiptap-image-upload {
+    .tiptap-image-upload-drag-area {
+      padding: 1.5rem 1rem;
+    }
+
+    .tiptap-image-upload-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .tiptap-image-upload-preview-content {
+      padding: 0.75rem;
+    }
   }
 }

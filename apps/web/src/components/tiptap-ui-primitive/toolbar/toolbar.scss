@@ -50,9 +50,8 @@
     }
 
     @media (max-width: 480px) {
-      position: fixed;
+      position: absolute;
       top: auto;
-      bottom: 0;
       height: calc(var(--tt-toolbar-height) + var(--tt-safe-area-bottom));
       border-top: 1px solid var(--tt-toolbar-border-color);
       border-bottom: none;
@@ -89,7 +88,7 @@
       background-color: transparent;
     }
 
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 480px) {
       width: 100%;
       border-radius: 0;
       border: none;

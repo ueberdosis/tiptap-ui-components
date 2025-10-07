@@ -1,141 +1,56 @@
+"use client"
+
 import * as React from "react"
-import { type Editor } from "@tiptap/react"
+
+// --- Lib ---
+import { parseShortcutKeys } from "@/lib/tiptap-utils"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
-// --- Icons ---
-import { Redo2Icon } from "@/components/tiptap-icons/redo2-icon"
-import { Undo2Icon } from "@/components/tiptap-icons/undo2-icon"
+// --- Tiptap UI ---
+import type {
+  UndoRedoAction,
+  UseUndoRedoConfig,
+} from "@/components/tiptap-ui/undo-redo-button"
+import {
+  UNDO_REDO_SHORTCUT_KEYS,
+  useUndoRedo,
+} from "@/components/tiptap-ui/undo-redo-button"
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
 import { Button } from "@/components/tiptap-ui-primitive/button"
+import { Badge } from "@/components/tiptap-ui-primitive/badge"
 
-export type HistoryAction = "undo" | "redo"
-
-/**
- * Props for the UndoRedoButton component.
- */
-export interface UndoRedoButtonProps extends ButtonProps {
-  /**
-   * The TipTap editor instance.
-   */
-  editor?: Editor | null
+export interface UndoRedoButtonProps
+  extends Omit<ButtonProps, "type">,
+    UseUndoRedoConfig {
   /**
    * Optional text to display alongside the icon.
    */
   text?: string
   /**
-   * The history action to perform (undo or redo).
+   * Optional show shortcut keys in the button.
+   * @default false
    */
-  action: HistoryAction
+  showShortcut?: boolean
 }
 
-export const historyIcons = {
-  undo: Undo2Icon,
-  redo: Redo2Icon,
-}
-
-export const historyShortcutKeys: Partial<Record<HistoryAction, string>> = {
-  undo: "Ctrl-z",
-  redo: "Ctrl-Shift-z",
-}
-
-export const historyActionLabels: Record<HistoryAction, string> = {
-  undo: "Undo",
-  redo: "Redo",
+export function HistoryShortcutBadge({
+  action,
+  shortcutKeys = UNDO_REDO_SHORTCUT_KEYS[action],
+}: {
+  action: UndoRedoAction
+  shortcutKeys?: string
+}) {
+  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
 /**
- * Checks if a history action can be executed.
+ * Button component for triggering undo/redo actions in a Tiptap editor.
  *
- * @param editor The TipTap editor instance
- * @param action The history action to check
- * @returns Whether the action can be executed
- */
-export function canExecuteHistoryAction(
-  editor: Editor | null,
-  action: HistoryAction
-): boolean {
-  if (!editor) return false
-  return action === "undo" ? editor.can().undo() : editor.can().redo()
-}
-
-/**
- * Executes a history action on the editor.
- *
- * @param editor The TipTap editor instance
- * @param action The history action to execute
- * @returns Whether the action was executed successfully
- */
-export function executeHistoryAction(
-  editor: Editor | null,
-  action: HistoryAction
-): boolean {
-  if (!editor) return false
-  const chain = editor.chain().focus()
-  return action === "undo" ? chain.undo().run() : chain.redo().run()
-}
-
-/**
- * Determines if a history action should be disabled.
- *
- * @param editor The TipTap editor instance
- * @param action The history action to check
- * @param userDisabled Whether the action is explicitly disabled by the user
- * @returns Whether the action should be disabled
- */
-export function isHistoryActionDisabled(
-  editor: Editor | null,
-  action: HistoryAction,
-  userDisabled: boolean = false
-): boolean {
-  if (userDisabled) return true
-  return !canExecuteHistoryAction(editor, action)
-}
-
-/**
- * Hook that provides all the necessary state and handlers for a history action.
- *
- * @param editor The TipTap editor instance
- * @param action The history action to handle
- * @param disabled Whether the action is explicitly disabled
- * @returns Object containing state and handlers for the history action
- */
-export function useHistoryAction(
-  editor: Editor | null,
-  action: HistoryAction,
-  disabled: boolean = false
-) {
-  const canExecute = React.useMemo(
-    () => canExecuteHistoryAction(editor, action),
-    [editor, action]
-  )
-
-  const isDisabled = isHistoryActionDisabled(editor, action, disabled)
-
-  const handleAction = React.useCallback(() => {
-    if (!editor || isDisabled) return
-    executeHistoryAction(editor, action)
-  }, [editor, action, isDisabled])
-
-  const Icon = historyIcons[action]
-  const actionLabel = historyActionLabels[action]
-  const shortcutKey = historyShortcutKeys[action]
-
-  return {
-    canExecute,
-    isDisabled,
-    handleAction,
-    Icon,
-    actionLabel,
-    shortcutKey,
-  }
-}
-
-/**
- * Button component for triggering undo/redo actions in a TipTap editor.
+ * For custom button implementations, use the `useHistory` hook instead.
  */
 export const UndoRedoButton = React.forwardRef<
   HTMLButtonElement,
@@ -146,54 +61,61 @@ export const UndoRedoButton = React.forwardRef<
       editor: providedEditor,
       action,
       text,
-      className = "",
-      disabled,
+      hideWhenUnavailable = false,
+      onExecuted,
+      showShortcut = false,
       onClick,
       children,
       ...buttonProps
     },
     ref
   ) => {
-    const editor = useTiptapEditor(providedEditor)
-
-    const { isDisabled, handleAction, Icon, actionLabel, shortcutKey } =
-      useHistoryAction(editor, action, disabled)
+    const { editor } = useTiptapEditor(providedEditor)
+    const { isVisible, handleAction, label, canExecute, Icon, shortcutKeys } =
+      useUndoRedo({
+        editor,
+        action,
+        hideWhenUnavailable,
+        onExecuted,
+      })
 
     const handleClick = React.useCallback(
-      (e: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(e)
-
-        if (!e.defaultPrevented && !disabled) {
-          handleAction()
-        }
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        onClick?.(event)
+        if (event.defaultPrevented) return
+        handleAction()
       },
-      [onClick, disabled, handleAction]
+      [handleAction, onClick]
     )
 
-    if (!editor || !editor.isEditable) {
+    if (!isVisible) {
       return null
     }
 
     return (
       <Button
-        ref={ref}
         type="button"
-        className={className.trim()}
-        disabled={isDisabled}
+        disabled={!canExecute}
         data-style="ghost"
-        data-disabled={isDisabled}
+        data-disabled={!canExecute}
         role="button"
         tabIndex={-1}
-        aria-label={actionLabel}
-        tooltip={actionLabel}
-        shortcutKeys={shortcutKey}
+        aria-label={label}
+        tooltip={label}
         onClick={handleClick}
         {...buttonProps}
+        ref={ref}
       >
-        {children || (
+        {children ?? (
           <>
             <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
+            {showShortcut && (
+              <HistoryShortcutBadge
+                action={action}
+                shortcutKeys={shortcutKeys}
+              />
+            )}
           </>
         )}
       </Button>
@@ -202,5 +124,3 @@ export const UndoRedoButton = React.forwardRef<
 )
 
 UndoRedoButton.displayName = "UndoRedoButton"
-
-export default UndoRedoButton

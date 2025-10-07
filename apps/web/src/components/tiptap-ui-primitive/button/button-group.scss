@@ -1,18 +1,22 @@
 .tiptap-button-group {
-  align-items: center;
+  position: relative;
   display: flex;
-  gap: 0.125rem;
-  flex-direction: column;
-}
+  vertical-align: middle;
 
-.tiptap-button-group {
-  &[data-orientation="vertical"],
-  [data-orientation="vertical"] {
+  &[data-orientation="vertical"] {
     flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-width: max-content;
+
+    > .tiptap-button {
+      width: 100%;
+    }
   }
 
-  &[data-orientation="horizontal"],
-  [data-orientation="horizontal"] {
+  &[data-orientation="horizontal"] {
+    gap: 0.125rem;
     flex-direction: row;
+    align-items: center;
   }
 }

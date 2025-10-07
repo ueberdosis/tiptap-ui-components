@@ -1,131 +1,50 @@
 import * as React from "react"
-import { isNodeSelection, type Editor } from "@tiptap/react"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
-// --- Icons ---
-import { CodeBlockIcon } from "@/components/tiptap-icons/code-block-icon"
-
 // --- Lib ---
-import { isNodeInSchema } from "@/lib/tiptap-utils"
+import { parseShortcutKeys } from "@/lib/tiptap-utils"
+
+// --- Tiptap UI ---
+import type { UseCodeBlockConfig } from "@/components/tiptap-ui/code-block-button"
+import {
+  CODE_BLOCK_SHORTCUT_KEY,
+  useCodeBlock,
+} from "@/components/tiptap-ui/code-block-button"
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
 import { Button } from "@/components/tiptap-ui-primitive/button"
+import { Badge } from "@/components/tiptap-ui-primitive/badge"
 
-export interface CodeBlockButtonProps extends Omit<ButtonProps, "type"> {
-  /**
-   * The TipTap editor instance.
-   */
-  editor?: Editor | null
+export interface CodeBlockButtonProps
+  extends Omit<ButtonProps, "type">,
+    UseCodeBlockConfig {
   /**
    * Optional text to display alongside the icon.
    */
   text?: string
   /**
-   * Whether the button should hide when the node is not available.
+   * Optional show shortcut keys in the button.
    * @default false
    */
-  hideWhenUnavailable?: boolean
+  showShortcut?: boolean
 }
 
-export function canToggleCodeBlock(editor: Editor | null): boolean {
-  if (!editor) return false
-
-  try {
-    return editor.can().toggleNode("codeBlock", "paragraph")
-  } catch {
-    return false
-  }
+export function CodeBlockShortcutBadge({
+  shortcutKeys = CODE_BLOCK_SHORTCUT_KEY,
+}: {
+  shortcutKeys?: string
+}) {
+  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
-export function isCodeBlockActive(editor: Editor | null): boolean {
-  if (!editor) return false
-  return editor.isActive("codeBlock")
-}
-
-export function toggleCodeBlock(editor: Editor | null): boolean {
-  if (!editor) return false
-  return editor.chain().focus().toggleNode("codeBlock", "paragraph").run()
-}
-
-export function isCodeBlockButtonDisabled(
-  editor: Editor | null,
-  canToggle: boolean,
-  userDisabled: boolean = false
-): boolean {
-  if (!editor) return true
-  if (userDisabled) return true
-  if (!canToggle) return true
-  return false
-}
-
-export function shouldShowCodeBlockButton(params: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-  nodeInSchema: boolean
-  canToggle: boolean
-}): boolean {
-  const { editor, hideWhenUnavailable, nodeInSchema, canToggle } = params
-
-  if (!nodeInSchema || !editor) {
-    return false
-  }
-
-  if (hideWhenUnavailable) {
-    if (isNodeSelection(editor.state.selection) || !canToggle) {
-      return false
-    }
-  }
-
-  return Boolean(editor?.isEditable)
-}
-
-export function useCodeBlockState(
-  editor: Editor | null,
-  disabled: boolean = false,
-  hideWhenUnavailable: boolean = false
-) {
-  const nodeInSchema = isNodeInSchema("codeBlock", editor)
-
-  const canToggle = canToggleCodeBlock(editor)
-  const isDisabled = isCodeBlockButtonDisabled(editor, canToggle, disabled)
-  const isActive = isCodeBlockActive(editor)
-
-  const shouldShow = React.useMemo(
-    () =>
-      shouldShowCodeBlockButton({
-        editor,
-        hideWhenUnavailable,
-        nodeInSchema,
-        canToggle,
-      }),
-    [editor, hideWhenUnavailable, nodeInSchema, canToggle]
-  )
-
-  const handleToggle = React.useCallback(() => {
-    if (!isDisabled && editor) {
-      return toggleCodeBlock(editor)
-    }
-    return false
-  }, [editor, isDisabled])
-
-  const shortcutKey = "Ctrl-Alt-c"
-  const label = "Code Block"
-
-  return {
-    nodeInSchema,
-    canToggle,
-    isDisabled,
-    isActive,
-    shouldShow,
-    handleToggle,
-    shortcutKey,
-    label,
-  }
-}
-
+/**
+ * Button component for toggling code block in a Tiptap editor.
+ *
+ * For custom button implementations, use the `useCodeBlock` hook instead.
+ */
 export const CodeBlockButton = React.forwardRef<
   HTMLButtonElement,
   CodeBlockButtonProps
@@ -135,62 +54,65 @@ export const CodeBlockButton = React.forwardRef<
       editor: providedEditor,
       text,
       hideWhenUnavailable = false,
-      className = "",
-      disabled,
+      onToggled,
+      showShortcut = false,
       onClick,
       children,
       ...buttonProps
     },
     ref
   ) => {
-    const editor = useTiptapEditor(providedEditor)
-
+    const { editor } = useTiptapEditor(providedEditor)
     const {
-      isDisabled,
+      isVisible,
+      canToggle,
       isActive,
-      shouldShow,
       handleToggle,
-      shortcutKey,
       label,
-    } = useCodeBlockState(editor, disabled, hideWhenUnavailable)
+      shortcutKeys,
+      Icon,
+    } = useCodeBlock({
+      editor,
+      hideWhenUnavailable,
+      onToggled,
+    })
 
     const handleClick = React.useCallback(
-      (e: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(e)
-
-        if (!e.defaultPrevented && !isDisabled) {
-          handleToggle()
-        }
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        onClick?.(event)
+        if (event.defaultPrevented) return
+        handleToggle()
       },
-      [onClick, isDisabled, handleToggle]
+      [handleToggle, onClick]
     )
 
-    if (!shouldShow || !editor || !editor.isEditable) {
+    if (!isVisible) {
       return null
     }
 
     return (
       <Button
         type="button"
-        className={className.trim()}
-        disabled={isDisabled}
         data-style="ghost"
         data-active-state={isActive ? "on" : "off"}
-        data-disabled={isDisabled}
         role="button"
+        disabled={!canToggle}
+        data-disabled={!canToggle}
         tabIndex={-1}
-        aria-label="codeBlock"
+        aria-label={label}
         aria-pressed={isActive}
-        tooltip={label}
-        shortcutKeys={shortcutKey}
+        tooltip="Code Block"
         onClick={handleClick}
         {...buttonProps}
         ref={ref}
       >
-        {children || (
+        {children ?? (
           <>
-            <CodeBlockIcon className="tiptap-button-icon" />
+            <Icon className="tiptap-button-icon" />
             {text && <span className="tiptap-button-text">{text}</span>}
+            {showShortcut && (
+              <CodeBlockShortcutBadge shortcutKeys={shortcutKeys} />
+            )}
           </>
         )}
       </Button>
@@ -199,5 +121,3 @@ export const CodeBlockButton = React.forwardRef<
 )
 
 CodeBlockButton.displayName = "CodeBlockButton"
-
-export default CodeBlockButton

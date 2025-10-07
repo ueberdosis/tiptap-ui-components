@@ -1,7 +1,83 @@
-import type { Attrs, Node } from "@tiptap/pm/model"
+import type { Node as TiptapNode } from "@tiptap/pm/model"
+import { NodeSelection, Selection, TextSelection } from "@tiptap/pm/state"
 import type { Editor } from "@tiptap/react"
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+
+export const MAC_SYMBOLS: Record<string, string> = {
+  mod: "⌘",
+  command: "⌘",
+  meta: "⌘",
+  ctrl: "⌃",
+  control: "⌃",
+  alt: "⌥",
+  option: "⌥",
+  shift: "⇧",
+  backspace: "Del",
+  delete: "⌦",
+  enter: "⏎",
+  escape: "⎋",
+  capslock: "⇪",
+} as const
+
+export function cn(
+  ...classes: (string | boolean | undefined | null)[]
+): string {
+  return classes.filter(Boolean).join(" ")
+}
+
+/**
+ * Determines if the current platform is macOS
+ * @returns boolean indicating if the current platform is Mac
+ */
+export function isMac(): boolean {
+  return (
+    typeof navigator !== "undefined" &&
+    navigator.platform.toLowerCase().includes("mac")
+  )
+}
+
+/**
+ * Formats a shortcut key based on the platform (Mac or non-Mac)
+ * @param key - The key to format (e.g., "ctrl", "alt", "shift")
+ * @param isMac - Boolean indicating if the platform is Mac
+ * @param capitalize - Whether to capitalize the key (default: true)
+ * @returns Formatted shortcut key symbol
+ */
+export const formatShortcutKey = (
+  key: string,
+  isMac: boolean,
+  capitalize: boolean = true
+) => {
+  if (isMac) {
+    const lowerKey = key.toLowerCase()
+    return MAC_SYMBOLS[lowerKey] || (capitalize ? key.toUpperCase() : key)
+  }
+
+  return capitalize ? key.charAt(0).toUpperCase() + key.slice(1) : key
+}
+
+/**
+ * Parses a shortcut key string into an array of formatted key symbols
+ * @param shortcutKeys - The string of shortcut keys (e.g., "ctrl-alt-shift")
+ * @param delimiter - The delimiter used to split the keys (default: "-")
+ * @param capitalize - Whether to capitalize the keys (default: true)
+ * @returns Array of formatted shortcut key symbols
+ */
+export const parseShortcutKeys = (props: {
+  shortcutKeys: string | undefined
+  delimiter?: string
+  capitalize?: boolean
+}) => {
+  const { shortcutKeys, delimiter = "+", capitalize = true } = props
+
+  if (!shortcutKeys) return []
+
+  return shortcutKeys
+    .split(delimiter)
+    .map((key) => key.trim())
+    .map((key) => formatShortcutKey(key, isMac(), capitalize))
+}
 
 /**
  * Checks if a mark exists in the editor schema
@@ -32,99 +108,175 @@ export const isNodeInSchema = (
 }
 
 /**
- * Gets the active attributes of a specific mark in the current editor selection.
- *
- * @param editor - The Tiptap editor instance.
- * @param markName - The name of the mark to look for (e.g., "highlight", "link").
- * @returns The attributes of the active mark, or `null` if the mark is not active.
+ * Moves the focus to the next node in the editor
+ * @param editor - The editor instance
+ * @returns boolean indicating if the focus was moved
  */
-export function getActiveMarkAttrs(
+export function focusNextNode(editor: Editor) {
+  const { state, view } = editor
+  const { doc, selection } = state
+
+  const nextSel = Selection.findFrom(selection.$to, 1, true)
+  if (nextSel) {
+    view.dispatch(state.tr.setSelection(nextSel).scrollIntoView())
+    return true
+  }
+
+  const paragraphType = state.schema.nodes.paragraph
+  if (!paragraphType) {
+    console.warn("No paragraph node type found in schema.")
+    return false
+  }
+
+  const end = doc.content.size
+  const para = paragraphType.create()
+  let tr = state.tr.insert(end, para)
+
+  // Place the selection inside the new paragraph
+  const $inside = tr.doc.resolve(end + 1)
+  tr = tr.setSelection(TextSelection.near($inside)).scrollIntoView()
+  view.dispatch(tr)
+  return true
+}
+
+/**
+ * Checks if a value is a valid number (not null, undefined, or NaN)
+ * @param value - The value to check
+ * @returns boolean indicating if the value is a valid number
+ */
+export function isValidPosition(pos: number | null | undefined): pos is number {
+  return typeof pos === "number" && pos >= 0
+}
+
+/**
+ * Checks if one or more extensions are registered in the Tiptap editor.
+ * @param editor - The Tiptap editor instance
+ * @param extensionNames - A single extension name or an array of names to check
+ * @returns True if at least one of the extensions is available, false otherwise
+ */
+export function isExtensionAvailable(
   editor: Editor | null,
-  markName: string
-): Attrs | null {
-  if (!editor) return null
-  const { state } = editor
-  const marks = state.storedMarks || state.selection.$from.marks()
-  const mark = marks.find((mark) => mark.type.name === markName)
+  extensionNames: string | string[]
+): boolean {
+  if (!editor) return false
 
-  return mark?.attrs ?? null
+  const names = Array.isArray(extensionNames)
+    ? extensionNames
+    : [extensionNames]
+
+  const found = names.some((name) =>
+    editor.extensionManager.extensions.some((ext) => ext.name === name)
+  )
+
+  if (!found) {
+    console.warn(
+      `None of the extensions [${names.join(", ")}] were found in the editor schema. Ensure they are included in the editor configuration.`
+    )
+  }
+
+  return found
 }
 
 /**
- * Checks if a node is empty
+ * Finds a node at the specified position with error handling
+ * @param editor The Tiptap editor instance
+ * @param position The position in the document to find the node
+ * @returns The node at the specified position, or null if not found
  */
-export function isEmptyNode(node?: Node | null): boolean {
-  return !!node && node.content.size === 0
-}
-
-/**
- * Utility function to conditionally join class names into a single string.
- * Filters out falsey values like false, undefined, null, and empty strings.
- *
- * @param classes - List of class name strings or falsey values.
- * @returns A single space-separated string of valid class names.
- */
-export function cn(
-  ...classes: (string | boolean | undefined | null)[]
-): string {
-  return classes.filter(Boolean).join(" ")
+export function findNodeAtPosition(editor: Editor, position: number) {
+  try {
+    const node = editor.state.doc.nodeAt(position)
+    if (!node) {
+      console.warn(`No node found at position ${position}`)
+      return null
+    }
+    return node
+  } catch (error) {
+    console.error(`Error getting node at position ${position}:`, error)
+    return null
+  }
 }
 
 /**
  * Finds the position and instance of a node in the document
  * @param props Object containing editor, node (optional), and nodePos (optional)
- * @param props.editor The TipTap editor instance
+ * @param props.editor The Tiptap editor instance
  * @param props.node The node to find (optional if nodePos is provided)
  * @param props.nodePos The position of the node to find (optional if node is provided)
  * @returns An object with the position and node, or null if not found
  */
 export function findNodePosition(props: {
   editor: Editor | null
-  node?: Node | null
+  node?: TiptapNode | null
   nodePos?: number | null
-}): { pos: number; node: Node } | null {
+}): { pos: number; node: TiptapNode } | null {
   const { editor, node, nodePos } = props
 
   if (!editor || !editor.state?.doc) return null
 
   // Zero is valid position
   const hasValidNode = node !== undefined && node !== null
-  const hasValidPos = nodePos !== undefined && nodePos !== null
+  const hasValidPos = isValidPosition(nodePos)
 
   if (!hasValidNode && !hasValidPos) {
     return null
   }
 
-  if (hasValidPos) {
-    try {
-      const nodeAtPos = editor.state.doc.nodeAt(nodePos!)
-      if (nodeAtPos) {
-        return { pos: nodePos!, node: nodeAtPos }
+  // First search for the node in the document if we have a node
+  if (hasValidNode) {
+    let foundPos = -1
+    let foundNode: TiptapNode | null = null
+
+    editor.state.doc.descendants((currentNode, pos) => {
+      // TODO: Needed?
+      // if (currentNode.type && currentNode.type.name === node!.type.name) {
+      if (currentNode === node) {
+        foundPos = pos
+        foundNode = currentNode
+        return false
       }
-    } catch (error) {
-      console.error("Error checking node at position:", error)
-      return null
+      return true
+    })
+
+    if (foundPos !== -1 && foundNode !== null) {
+      return { pos: foundPos, node: foundNode }
     }
   }
 
-  // Otherwise search for the node in the document
-  let foundPos = -1
-  let foundNode: Node | null = null
-
-  editor.state.doc.descendants((currentNode, pos) => {
-    // TODO: Needed?
-    // if (currentNode.type && currentNode.type.name === node!.type.name) {
-    if (currentNode === node) {
-      foundPos = pos
-      foundNode = currentNode
-      return false
+  // If we have a valid position, use findNodeAtPosition
+  if (hasValidPos) {
+    const nodeAtPos = findNodeAtPosition(editor, nodePos!)
+    if (nodeAtPos) {
+      return { pos: nodePos!, node: nodeAtPos }
     }
-    return true
-  })
+  }
 
-  return foundPos !== -1 && foundNode !== null
-    ? { pos: foundPos, node: foundNode }
-    : null
+  return null
+}
+
+/**
+ * Checks if the current selection in the editor is a node selection of specified types
+ * @param editor The Tiptap editor instance
+ * @param types An array of node type names to check against
+ * @returns boolean indicating if the selected node matches any of the specified types
+ */
+export function isNodeTypeSelected(
+  editor: Editor | null,
+  types: string[] = []
+): boolean {
+  if (!editor || !editor.state.selection) return false
+
+  const { state } = editor
+  const { selection } = state
+
+  if (selection.empty) return false
+
+  if (selection instanceof NodeSelection) {
+    const node = selection.node
+    return node ? types.includes(node.type.name) : false
+  }
+
+  return false
 }
 
 /**
@@ -150,7 +302,8 @@ export const handleImageUpload = async (
     )
   }
 
-  // For demo/testing: Simulate upload progress
+  // For demo/testing: Simulate upload progress. In production, replace the following code
+  // with your own upload implementation.
   for (let progress = 0; progress <= 100; progress += 10) {
     if (abortSignal?.aborted) {
       throw new Error("Upload cancelled")
@@ -159,54 +312,7 @@ export const handleImageUpload = async (
     onProgress?.({ progress })
   }
 
-  return "/images/placeholder-image.png"
-
-  // Uncomment for production use:
-  // return convertFileToBase64(file, abortSignal);
-}
-
-/**
- * Converts a File to base64 string
- * @param file The file to convert
- * @param abortSignal Optional AbortSignal for cancelling the conversion
- * @returns Promise resolving to the base64 representation of the file
- */
-export const convertFileToBase64 = (
-  file: File,
-  abortSignal?: AbortSignal
-): Promise<string> => {
-  if (!file) {
-    return Promise.reject(new Error("No file provided"))
-  }
-
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-
-    const abortHandler = () => {
-      reader.abort()
-      reject(new Error("Upload cancelled"))
-    }
-
-    if (abortSignal) {
-      abortSignal.addEventListener("abort", abortHandler)
-    }
-
-    reader.onloadend = () => {
-      if (abortSignal) {
-        abortSignal.removeEventListener("abort", abortHandler)
-      }
-
-      if (typeof reader.result === "string") {
-        resolve(reader.result)
-      } else {
-        reject(new Error("Failed to convert File to base64"))
-      }
-    }
-
-    reader.onerror = (error) =>
-      reject(new Error(`File reading error: ${error}`))
-    reader.readAsDataURL(file)
-  })
+  return "/images/tiptap-ui-placeholder-image.jpg"
 }
 
 type ProtocolOptions = {
