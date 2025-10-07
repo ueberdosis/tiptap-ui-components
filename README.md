@@ -2,27 +2,29 @@
 
 Tiptap UI Components is a library of modular, MIT-licensed [React components](https://tiptap.dev/docs/ui-components/components/overview), [templates](https://tiptap.dev/docs/ui-components/templates/simple-editor), and [primitives](https://tiptap.dev/docs/ui-components/primitives) that help you build rich text editor UIs faster, on top of the headless [Tiptap](https://tiptap.dev) framework.
 
-This repo also includes a [CLI tool](https://tiptap.dev/docs/ui-components/getting-started/cli) to scaffold your editor setup or install individual components with zero config.
+This repository **may not always contain the latest version** of the UI Components.
+For the most up-to-date components and templates, **install them directly using the Tiptap CLI**.
 
-Use the components as-is, customize them to match your design system, or drop them into an existing Tiptap setup. They're optional, composable, and built for dev speed.
+## Installation
 
-## Getting Started
+> **Recommended:** Always install or update via the CLI to ensure you get the latest version.
 
-Start with the [UI Components docs](https://tiptap.dev/docs/ui-components/getting-started/overview) to browse demos, setup guides, and usage patterns.
-
-### Installation
-
-Install with the Tiptap CLI to scaffold your setup:
+To scaffold your setup:
 
 ```bash
 npx @tiptap/cli init
 ```
 
-Or install a single component:
+Or to install a specific component:
 
 ```bash
 npx @tiptap/cli add [component-name]
 ```
+
+For full docs and more details, **head over to** the Tiptap UI Components overview page:
+[https://tiptap.dev/docs/ui-components/getting-started/overview](https://tiptap.dev/docs/ui-components/getting-started/overview)
+
+---
 
 ## Available Components
 
@@ -76,4 +78,7 @@ No themes or complex overrides required. Edit the source directly to match your 
 
 ---
 
-Want to contribute, suggest a component, or report a bug? [Open an issue](https://github.com/ueberdosis/tiptap-ui-components/issues) or join the discussion in [Discord](https://tiptap.dev/discord).
+## Contributing
+
+Want to contribute, suggest a component, or report a bug?
+[Open an issue](https://github.com/ueberdosis/tiptap-ui-components/issues) or join the discussion in [Discord](https://tiptap.dev/discord).
