@@ -10,7 +10,7 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@floating-ui/react": "^0.27.12",
+    "@floating-ui/react": "^0.27.16",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-popover": "^1.1.15",
     "@tiptap/extension-highlight": "^3.6.5",
@@ -36,18 +36,18 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.29.0",
+    "@eslint/js": "^9.37.0",
     "@types/lodash.throttle": "^4.1.9",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@typescript-eslint/eslint-plugin": "^8.35.0",
-    "@typescript-eslint/parser": "^8.35.0",
-    "@vitejs/plugin-react": "^4.6.0",
-    "eslint": "^9.29.0",
-    "eslint-config-prettier": "^9.1.0",
-    "globals": "^16.2.0",
-    "sass-embedded": "^1.89.2",
+    "@types/react": "^19.2.1",
+    "@types/react-dom": "^19.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
+    "@typescript-eslint/parser": "^8.46.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^9.1.2",
+    "globals": "^16.4.0",
+    "sass-embedded": "^1.93.2",
     "typescript": "5.5.4",
-    "vite": "^5.4.19"
+    "vite": "^5.4.20"
   }
 }
