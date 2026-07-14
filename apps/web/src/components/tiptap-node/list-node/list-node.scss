@@ -47,6 +47,10 @@
       margin-top: 0;
       line-height: 1.6;
     }
+
+    p:not(:first-child) {
+      margin-top: 0;
+    }
   }
 
   // Ordered lists
